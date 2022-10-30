@@ -3,6 +3,18 @@ from binascii import hexlify, unhexlify
 
 Multicast = "224.0.0.251"
 Username = ""
+
+def getLANIP():
+  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  try:
+    s.connect(("255.255.255.255", 1))
+    IP = s.getsockname()[0]
+  except Exception:
+    IP = "127.0.0.1"
+  finally:
+    s.close()
+  return IP
+
 ingress = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 try:
   ingress.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -12,11 +24,10 @@ ingress.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
 ingress.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 1)
 
 ingress.bind((Multicast, 15002))
-host = "10.121.218.195"erro
+host = getLANIP()
 ingress.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, socket.inet_aton(host))
 ingress.setsockopt(socket.SOL_IP, socket.IP_ADD_MEMBERSHIP,
-socket.inet_aton(MCAST_GRP) + socket.inet_aton(host))
-
+socket.inet_aton(Multicast) + socket.inet_aton(host))
 
 def _decompress(comp):
   comp = comp.replace("3","555").replace("4", "."*4).replace("5"," "*5).replace(";"," ").replace("6","#"*6).replace("!n","\n")
@@ -120,25 +131,33 @@ hander = GameHandler()
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
+s.settimeout(2)
 
 while True:
 
   pkt = "USER: %s, %s"%(Username, input("> "))
   s.sendto(pkt.encode(), (Multicast, 15003))
   data = b"."
-  while Username not in data.decode():
-    data, addr = ingress.recvfrom(800)
+  try:
+    while Username not in data.decode():
+      data, addr = ingress.recvfrom(800)
 
-  playerstats = data.decode().split("\n")[0]
-  mapdata = _decompress(data.decode().split("\n")[1])
-  hander.Stats(float(playerstats.split(", ")[-2]), 0.0)
-  if pkt[-1] == "i":
-    hander.updateInv("","i")
 
-  if Color == True:
-    mapdata = colour(mapdata)
-  if Unicode == True:
-    mapdata = unify(mapdata)
+    playerstats = data.decode().split("\n")[0]
+    mapdata = _decompress(data.decode().split("\n")[1])
+    hander.Stats(float(playerstats.split(", ")[-2]), 0.0)
+    if pkt[-1] == "i":
+      hander.updateInv("","i")
 
-  print(mapdata)
-  print(playerstats)
+    if Color == True:
+      mapdata = colour(mapdata)
+    if Unicode == True:
+      mapdata = unify(mapdata)
+
+    print(mapdata)
+    print(playerstats)
+
+  except KeyboardInterrupt:
+    break
+  except:
+    pass
