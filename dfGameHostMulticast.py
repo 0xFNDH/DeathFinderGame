@@ -90,7 +90,8 @@ def distance(p1, p2):
 def IV(data, true_false=False, limit=600):
   """
   Input Validation - Returns sanitized data.
-  true_false - Instead of returning data, this returns True or False depending on if the data is clean.
+  true_false - Instead of returning data, th
+  returns True or False depending on if the data is clean.
   """
   assert type(true_false) == bool
   data = str(data)[:limit]
@@ -216,19 +217,19 @@ class DeathFinder():
       # H : Book of Healing
       loot = choice("ESRJH")
 
-      if loot is "E":
+      if loot == "E":
         self.ESP.append(user)
         print("[?] %s obtained an Amulet of ESP"%(user), file=sys.stderr)
-      elif loot is "S":
+      elif loot == "S":
         self.SPELLWALL.append(user)
         print("[?] %s obtained a Book of Magic Shield"%(user), file=sys.stderr)
-      elif loot is "R":
+      elif loot == "R":
         self.REFLECTION.append(user)
         print("[?] %s obtained an Amulet of Reflection"%(user), file=sys.stderr)
-      elif loot is "J":
+      elif loot == "J":
         self.JUMPBOOT.append(user)
         print("[?] %s obtained Jumping Boots"%(user), file=sys.stderr)
-      elif loot is "H":
+      elif loot == "H":
         self.HEALING.append(user)
         print("[?] %s obtained a Book of Healing"%(user), file=sys.stderr)
 
@@ -304,7 +305,7 @@ class DeathFinder():
             else:
               if (x,y) in self.doors:
                 view += "+"
-              elif (x,y) in self.dark and lit is False:
+              elif (x,y) in self.dark and lit == False:
                 view += ";"
               elif (x,y) in _players:
                 view += "&"
@@ -344,7 +345,7 @@ class DeathFinder():
 
   def que_data(self, user, data):
     """
-    This function ques the player data
+    Function ques the player data
     """
     if user in list(self.players.keys()):
       if user not in self.player_que:
@@ -583,7 +584,7 @@ class BroadcastServer():
 
   def __init__(self, multicast, address, wait_time=5.0, _epoch=0, log_buffer=sys.stderr, logging=True):
 
-    assert len(multicast) is 2
+    assert len(multicast) == 2
 
     self.multicast = multicast
     self.address = address
