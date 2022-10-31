@@ -161,12 +161,6 @@ class DeathFinderNPC():
   def inflict(self, position, atk=2):
     """
     inflict(player_position, player_attack)
-    deal damage to player, enemy, crit
-    return damage delt to player and xp gain
-    punish weak attacks, if a player's attack is weak that means they are trying to skip the fights
-    every whole xp is +1 damage
-    5 goblins = 25hp = +1 damage
-    1/25 so 0.04xp per 1 damage
     """
     delt = atk
     taken = 0
@@ -180,6 +174,7 @@ class DeathFinderNPC():
         if self.ENEMY[monster]["hp"] <= 0:
           print("[-] %s was killed."%(monster), file=sys.stderr)
           self.ENEMY.pop(monster)
+          xp += 0.04
         else:
           monsize = self.ENEMY[monster]["size"]
           taken += (monsize/atk)*monsize
