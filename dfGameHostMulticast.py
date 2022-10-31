@@ -23,7 +23,7 @@ from random import randint, choice
 
 def building_pog(x,y,w,l,d="left",i=True):
   build = [(x,y)]
-  if i is True:
+  if i == True:
     inside = square_pog(x+1,y+1,w-1,l-1)
   else:
     inside = []
@@ -37,19 +37,19 @@ def building_pog(x,y,w,l,d="left",i=True):
     build.append((x+w,Y+y))
   build.append((x+w,y+l))
 
-  if d is "left":
+  if d == "left":
     door = (x, int(y+(l/2)))
-  elif d is "right":
+  elif d == "right":
     door = (x+w, int(y+(l/2)))
-  elif d is "top":
+  elif d == "top":
     door = (int(x+(w/2)), y)
-  elif d is "bottom":
+  elif d == "bottom":
     door = (int(x+(w/2)), y+l)
-  elif d is "random":
+  elif d == "random":
     door = choice(build)
   if door:
     build.remove(door)
-    if i is True:
+    if i == True:
       inside.append(door)
   return build, door, inside
 
@@ -110,9 +110,9 @@ class DeathFinder():
 
   def __init__(self, width, height, multicast, address, wait=5.0):
 
-    assert type(width) is int
-    assert type(height) is int
-    assert len(multicast) is 3
+    assert type(width) == int
+    assert type(height) == int
+    assert len(multicast) == 3
     assert type(wait) in [int,float]
 
     self.width = width
