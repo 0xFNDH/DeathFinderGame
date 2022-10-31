@@ -82,10 +82,8 @@ class DeathFinderNPC():
     medium = ["Snake", "GoblinHog", "HogGoblin", "Kobold", "eyeFloating", "AntGaint", "GoblinHog", "qsucubus", "mimic", "Orge", "Pudding", "python"]
     hard   = ["#StoneGolumn", "?Mimic", "Basilisk", "Lich", "ArchAngel", "LordofGoblins", "Naga"]
     ohio   = ["Wyvern", "Dragon", "demonPrince"]
-    if depth < 40:
+    if depth < 80:
       monster = choice(easy)
-    elif depth < 80:
-      monster = choice(easy+medium)
     elif depth < 100:
       monster = choice(easy+medium*2)
     elif depth < 130:
