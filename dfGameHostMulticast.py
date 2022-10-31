@@ -432,7 +432,7 @@ class DeathFinder():
           self.magicwalls += barrier
           self.walls += barrier
           self.tempwalls.append([self.epoch+5, barrier])
-          print("[*] %s read the Book of Magic Shield"%(user), file=sys.stderr)
+          print("[*] %s reads the Book of Magic Shield"%(user), file=sys.stderr)
 
         elif user in self.JUMPBOOT and action.upper().startswith("!J"):
           moveopt = {
@@ -453,7 +453,7 @@ class DeathFinder():
         elif user in self.HEALING and action.upper() == "!H":
           # todo: trade xp for hp
           for _pl in self.players:
-            self.players[_pl]["status"] += choice([0,0.5,0.5,1])
+            self.players[_pl]["status"] += choice([0,0.5,0.5,1,1])
 
       elif action in "wasd":
         if action == "w":
