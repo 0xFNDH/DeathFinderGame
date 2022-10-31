@@ -562,7 +562,7 @@ class DeathFinder():
         self.players[user]["status"] -= hplost
       self.players[user]["xp"] += xpgain
       if xpgain > 0.01:
-        print("[%s] Hp(%s)-%s XP+%s "%(user, _hp, hplost, xpgain), file=sys.stderr)
+        print("[%s] Hp(%s)-%s XP+%s "%(user, round(_hp,3), hplost, xpgain), file=sys.stderr)
 
     self.BroadcastUpdate()
     self.player_que = []
