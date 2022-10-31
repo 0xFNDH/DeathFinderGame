@@ -29,11 +29,13 @@ class DeathFinderNPC():
   def damagefield(self, mran=None):
     """
     Setting mran will return the enemy that owns that damage zone.
+    If mran is not set it will just return all the spots that deal damage.
     """
     if mran == None:
       zones = []
       for enemy in self.ENEMY:
         x,y = self.ENEMY[enemy]["pos"]
+        zones.append((x,y))
         zones.append((x,y+1))
         zones.append((x,y-1))
         zones.append((x+1,y))
@@ -76,10 +78,10 @@ class DeathFinderNPC():
     return None
 
   def randomMonster(self, depth):
-    easy   = ["goblin", "spider", "goblinscout"]
-    medium = ["Snake", "GoblinHog", "Goblin"]
-    hard   = ["#StoneGolumn", "?Mimic"]
-    ohio   = ["Wyvern", "Dragon"]
+    easy   = ["goblin", "goblin", "goblin", "goblin", "spider", "orc", "rat", "blobTar", "nymph"]
+    medium = ["Snake", "GoblinHog", "HogGoblin", "Kobold", "eyeFloating", "AntGaint", "GoblinHog", "qsucubus", "mimic", "Orge", "Pudding", "python"]
+    hard   = ["#StoneGolumn", "?Mimic", "Basilisk", "Lich", "ArchAngel", "LordofGoblins", "Naga"]
+    ohio   = ["Wyvern", "Dragon", "demonPrince"]
     if depth < 40:
       monster = choice(easy)
     elif depth < 80:
@@ -87,29 +89,33 @@ class DeathFinderNPC():
     elif depth < 100:
       monster = choice(easy+medium*2)
     elif depth < 130:
-      monster = choice(medium)
+      monster = choice(hard+medium)
     elif depth < 160:
       monster = choice(hard+medium*3)
     elif depth == 999:
-      monster = choice(("Unicorn","Blob","Imp"))
+      monster = choice(("Unicorn","Imp"))
     else:
       monster = choice(easy+medium+hard+ohio)
 
     if monster in easy:
-      health = choice((3,4,5))
+      health = choice((4,5,5,6))
       size = 1
     elif monster in medium:
-      health = choice((8,10,11))
-      size = choice((2,3,4))
+      health = choice((7,8,8,10,11))
+      size = choice((2,3,3,4))
+      if monster in ["eyeFloating", "AntGaint", "Kobold", "python", "qsucubus"]:
+        size = -1 * size
     elif monster in hard:
-      health = choice((15,18))
-      size = choice((3,4))
+      health = choice((14,15,16,18))
+      size = choice((4,5,6))
+      if monster in ["ArchAngel", "Basilisk", "Naga"]:
+        size = -1 * size
     elif monster in ohio:
       health = choice((20,25))
-      size = choice((-5,-6))
+      size = choice((-5,-6,-7))
     else:
       health = choice((6,8,10,12,14))
-      size = choice((3,4))
+      size = choice((3,4,5))
 
     return monster, health, size
 
@@ -166,8 +172,8 @@ class DeathFinderNPC():
     taken = 0
     xp = 0
     if position in self.damagefield():
-      if choice(range(5)) == 0:
-        delt += atk # 20% player crit chance
+      #if choice(range(5)) == 0:
+      #  delt += atk # 20% player crit chance
       monster = self.damagefield(position)
       if monster != None:
         self.ENEMY[monster]["hp"] -= delt
