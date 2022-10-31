@@ -124,16 +124,16 @@ class DeathFinder():
     self.epoch = 0
     self.visible = 9
     self.players = {
-            "DeathFinder": {
-                    "pos":  (1,2),
-                    "status": 10,
-                    "action": " ",
-                    "xp": 0.0},
-            "Admin": {
-                    "pos":  (4,4),
-                    "status": 10,
-                    "action": " ",
-                    "xp": 0.0}
+      "DeathFinder": {
+        "pos":  (1,2),
+        "status": 10,
+        "action": " ",
+        "xp": 0.0},
+      "Admin": {
+        "pos":  (4,4),
+        "status": 10,
+        "action": " ",
+        "xp": 0.0}
     }
     self.walls = []
     self.doors = []
@@ -360,10 +360,10 @@ class DeathFinder():
       while spawnpoint in self.all_solids():
         spawnpoint = (randint(2, self.width-2), randint(2, 5))
       self.players.update({user:{
-                      "pos":  spawnpoint,
-                      "status": 10,
-                      "action": " ",
-                      "xp": 0.0}})
+        "pos":  spawnpoint,
+        "status": 10,
+        "action": " ",
+        "xp": 0.0}})
       self.player_que.append(user)
     else:
       print("[!] Max Player Limit", file=sys.stderr)
@@ -454,7 +454,9 @@ class DeathFinder():
         elif user in self.HEALING and action.upper() == "!H":
           # todo: trade xp for hp
           for _pl in self.players:
-            self.players[_pl]["status"] += choice([0,0.5,0.5,1,1])
+            if self.players[_pl]["status"] <= 10:
+              self.players[_pl]["status"] += choice([0,0.5,0.5,1,1])
+              self.players[user]["xp"] -= 0.04
 
       elif action in "wasd":
         if action == "w":
@@ -479,9 +481,6 @@ class DeathFinder():
             x -= 1
 
         self.players[user]["pos"] = (x,y)
-        # if player casts, send data to class 3
-        # set action to " " and loop back again to unionize the visual field. the first player doesn't see the last players movment
-        # list(players.keys) + list(players.keys)[:-1]
 
     for monster in self.npc_manager.ENEMY:
       _rlwalls = self.npc_manager.allnpc_but(monster)
@@ -558,8 +557,9 @@ class DeathFinder():
       damage += int(self.players[user]["xp"])
       hplost, xpgain = self.npc_manager.inflict(position,damage)
       _hp = self.players[user]["status"]
-      hplost -= choice(([0]*6)+[0.5])
-      self.players[user]["status"] -= hplost
+      if self.players[user]["status"] <= 15.0:
+        hplost -= choice(([0]*10)+[0.5])
+        self.players[user]["status"] -= hplost
       self.players[user]["xp"] += xpgain
       if xpgain > 0.01:
         print("[%s] Hp(%s)-%s XP+%s "%(user, _hp, hplost, xpgain), file=sys.stderr)
