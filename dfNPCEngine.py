@@ -78,8 +78,8 @@ class DeathFinderNPC():
     return None
 
   def randomMonster(self, depth):
-    easy   = ["goblin", "goblin", "goblin", "goblin", "spider", "orc", "rat", "blobTar", "nymph"]
-    medium = ["Snake", "GoblinHog", "HogGoblin", "Kobold", "eyeFloating", "AntGaint", "GoblinHog", "qsucubus", "?mimic", "Orge", "Pudding", "python"]
+    easy   = ["goblin", "goblin", "goblin", "goblin", "spider", "orc", "orc", "rat", "blobTar", "nymph"]
+    medium = ["Snake", "GoblinHog", "HogGoblin", "Kobold", "AntGaint", "GoblinHog", "qsucubus", "?mimic", "Orge", "Pudding"]
     hard   = ["#StoneGolumn", "?Mimic", "Basilisk", "Lich", "ArchAngel", "LordofGoblins", "Naga"]
     ohio   = ["Wyvern", "Dragon", "demonPrince"]
     if depth < 80:
@@ -101,7 +101,7 @@ class DeathFinderNPC():
     elif monster in medium:
       health = choice((7,8,8,10,11))
       size = choice((2,3,3,4))
-      if monster in ["eyeFloating", "AntGaint", "Kobold", "python", "qsucubus"]:
+      if monster in ["AntGaint", "Kobold", "qsucubus"]:
         size = -1 * size
     elif monster in hard:
       health = choice((14,15,16,18))
@@ -120,9 +120,9 @@ class DeathFinderNPC():
   def spawnNPC(self, npcname, position, size, moveset="ad"):
     if npcname not in list(self.NPC.keys()):
       npc_stats = {
-              "pos":position,
-              "moveset":moveset,
-              "size":size
+        "pos":position,
+        "moveset":moveset,
+        "size":size
       }
       self.NPC.update({npcname:npc_stats})
 
@@ -131,10 +131,10 @@ class DeathFinderNPC():
     for entnum in range(1,25):
       if tempname not in list(self.ENEMY.keys()):
         entity_stats = {
-                "pos":position,
-                "moveset":moveset,
-                "size":size,
-                "hp":health
+          "pos":position,
+          "moveset":moveset,
+          "size":size,
+          "hp":health
         }
         self.ENEMY.update({tempname: entity_stats})
         break
