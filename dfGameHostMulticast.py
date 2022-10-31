@@ -141,7 +141,7 @@ class DeathFinder():
     self.magicwalls = []
     self.tempwalls = []
     self.dark = []
-    self.loot = [(2,83),(5,5),(5,6),(5,7),(5,8)]
+    self.loot = [(2,82),(5,5),(5,6),(5,7),(5,8)]
     self.ascii = ".&+@#:;?"
 
     self.ESP = ["Admin"]
