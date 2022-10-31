@@ -141,7 +141,7 @@ class DeathFinder():
     self.magicwalls = []
     self.tempwalls = []
     self.dark = []
-    self.loot = [(2,82),(34,4),(5,5),(5,6),(5,7),(5,8)]
+    self.loot = [(2,82),(33,4),(34,4),(5,5),(5,6),(5,7),(5,8)]
     self.ascii = ".&+@#:;?"
 
     self.ESP = ["Admin"]
@@ -274,6 +274,16 @@ class DeathFinder():
       for user in dead:
         if user in list(self.players.keys()):
           self.players.pop(user)
+          if self.ESP.count(user) > 0:
+            self.ESP.remove(user)
+          if self.HEALING.count(user) > 0:
+            self.HEALING.remove(user)
+          if self.JUMPBOOT.count(user) > 0:
+            self.JUMPBOOT.remove(user)
+          if self.SPELLWALL.count(user) > 0:
+            self.SPELLWALL.remove(user)
+          if self.REFLECTION.count(user) > 0:
+            self.REFLECTION.remove(user)
 
   def Render(self, user):
 
@@ -285,7 +295,7 @@ class DeathFinder():
       _players = self.everyone_but(user)
       _NPC = self.npc_manager.showNPCs()
       visability = self.visible
-      if usery > 35:
+      if 155 > usery > 35:
         visability = 6
       view = ""
       omni_view = ""
