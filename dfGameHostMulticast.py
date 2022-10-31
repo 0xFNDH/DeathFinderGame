@@ -557,7 +557,7 @@ class DeathFinder():
       damage += int(self.players[user]["xp"])
       hplost, xpgain = self.npc_manager.inflict(position,damage)
       _hp = self.players[user]["status"]
-      hplost -= choice(([0]*5)+[0.5])
+      hplost -= choice(([0]*6)+[0.5])
       self.players[user]["status"] -= hplost
       self.players[user]["xp"] += xpgain
       if xpgain > 0.01:
@@ -671,7 +671,7 @@ if __name__ == "__main__":
 
   recieving = 15003
   sending   = 15002
-  Game = DeathFinder(40,200, (MCAST_GRP, sending, recieving), address, wait=1)
+  Game = DeathFinder(40,200, (MCAST_GRP, sending, recieving), address, wait=0.5)
 
   build = building_pog(30,2,6,4,"left")
   Game.bricks += build[0]
