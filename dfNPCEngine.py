@@ -5,25 +5,25 @@ class DeathFinderNPC():
 
   def __init__(self):
     self.NPC = {
-            "Jacob":{
-                    "pos":(30,73),
-                    "moveset":"ad",
-                    "size":2
-            }
+      "Jacob":{
+        "pos":(30,73),
+        "moveset":"ad",
+        "size":2
+        }
     }
     self.ENEMY = {
-            "goblin":{
-                    "pos":(5,35),
-                    "moveset":"ad",
-                    "size":1,
-                    "hp":5
-            },
-            "Dragon":{
-                    "pos":(80,80),
-                    "moveset":"aaadds",
-                    "size":-6,
-                    "hp":25
-            }
+      "goblin":{
+         "pos":(5,35),
+         "moveset":"ad",
+         "size":1,
+         "hp":5
+         },
+      "Dragon":{
+         "pos":(50,80),
+         "moveset":"aaadds",
+         "size":-10,
+         "hp":25
+         }
     }
 
   def damagefield(self, mran=None):
@@ -172,11 +172,11 @@ class DeathFinderNPC():
         if self.ENEMY[monster]["hp"] <= 0:
           print("[-] %s was killed."%(monster), file=sys.stderr)
           self.ENEMY.pop(monster)
-          xp += 0.04
+          xp += 0.02
         else:
           monsize = self.ENEMY[monster]["size"]
           taken += (monsize/atk)*monsize
           # damage recieved = (size/attack)*size
           # this prevents players from rushing to the end of the game
-          xp += 0.04
+          xp += 0.02
     return round(taken,2), round(xp*delt,2)
