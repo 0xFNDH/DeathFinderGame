@@ -180,6 +180,4 @@ class DeathFinderNPC():
           # damage recieved = (size/attack)*size
           # this prevents players from rushing to the end of the game
           xp += 0.04
-    return taken, xp*delt
-
-#manager = DeathFinderNPC()
+    return round(taken,2), round(xp*delt,2)
