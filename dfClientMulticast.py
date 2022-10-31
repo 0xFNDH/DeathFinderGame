@@ -2,7 +2,7 @@ import socket, time, sys
 from binascii import hexlify, unhexlify
 
 Multicast = "224.0.0.251"
-Username = ""
+Username = "Jacob"
 
 Color = True
 Unicode = False
@@ -148,7 +148,7 @@ class GameHandler():
       if float(xp) == 0.0:
         print("You feel drained as your strength flees your body.")
       else:
-        print("You feel weak and as if they stole your energy.")
+        print("You feel slightly weaker.")
         
     self.HP = float(hp)
     self.XP = float(xp)
