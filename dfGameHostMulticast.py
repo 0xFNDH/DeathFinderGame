@@ -14,59 +14,12 @@ Process:
         6.) Client processs
         ^^  Repeat
 
-Maybe dynamic with Z-score for waiting so
-if everyone is going slow the server will
-slow down as well.
-
-Client syncronises by listening before sending new player request
-
-READ: dont override current backup.
-rendering is buggy at max distance, local test it
-minx and miny are probably the reason so either figure that one out or run the whole map which should work.
-
-spawn a thread to double broadcast 1 second after the inital one incase the user didnt listen.
-or in the listener make the client reply udp maybe not. double down on it. or make a force render port!!!
-
-status is health
-goblin is player, attacks are auto in death space
-player in death space recieves and deals damage automatically
-
-globlins spawn at a Y level range
-player's move before enemies so update player space then update enemies
-*unless enemies are quick
-new port for broadcasting overall games events
-[player has cleared doungeon level 5]
-   to: (x, 70-75)
-[a door has opened] broadcast to (x,30-35)
-
-random choice for healing
-players level up by clearing floors
-
-magicwall_pog
-
-procedurally generated future levels
-
-command 'e' removes damage spot from current space but only if random.chance happens (block ability)
-
-dragon casts magic
-
-add mob spawning based on spawn points
-add mob spawning command
-add npc healing
-maybe add item to player:inv:{item:true} like speed shoes, location check + remove item
-
-if playerxy is itemxy
-magiccasting.append(player)
-if player in magiccasting and action=C:
-        cast magic
-
 """
 
 import sys, math, time, socket, traceback, string
 from dfNPCEngine import DeathFinderNPC
 from dfMapRender import MapLoad
 from random import randint, choice
-from json import loads
 
 def building_pog(x,y,w,l,d="left",i=True):
   build = [(x,y)]
@@ -143,7 +96,7 @@ def IV(data, true_false=False, limit=600):
   data = str(data)[:limit]
   _cleaned = ""
   for char in data:
-    if char not in string.ascii_letters + string.digits:
+    if char not in string.ascii_letters + string.digits + "!":
       if true_false:
         return False
     else:
@@ -176,7 +129,7 @@ class DeathFinder():
                     "action": " ",
                     "xp": 0.0},
             "Admin": {
-                    "pos":  (11,89),
+                    "pos":  (4,4),
                     "status": 10,
                     "action": " ",
                     "xp": 0.0}
@@ -184,10 +137,17 @@ class DeathFinder():
     self.walls = []
     self.doors = []
     self.bricks = []
-
     self.magicwalls = []
+    self.tempwalls = []
     self.dark = []
-    self.ascii = ".&+@#:;"
+    self.loot = [(2,83),(5,5),(5,6),(5,7),(5,8)]
+    self.ascii = ".&+@#:;?"
+
+    self.ESP = ["Admin"]
+    self.SPELLWALL = []
+    self.REFLECTION = [] # todo: chance 50%
+    self.HEALING = []
+    self.JUMPBOOT = []
 
     self.yminrender = None
     self.ymaxrender = None
@@ -247,6 +207,35 @@ class DeathFinder():
     objects.append(self.npc_manager.allnpc_but("___"))
     return objects
 
+  def ObtainLoot(self, user):
+    if user in list(self.players.keys()):
+      # E : Amulet of ESP
+      # S : Book of Magic Shield
+      # R : Amulet of Reflection
+      # J : Jumping Boots
+      # H : Book of Healing
+      loot = choice("ESRJH")
+
+      if loot is "E":
+        self.ESP.append(user)
+        print("[?] %s obtained an Amulet of ESP"%(user), file=sys.stderr)
+      elif loot is "S":
+        self.SPELLWALL.append(user)
+        print("[?] %s obtained a Book of Magic Shield"%(user), file=sys.stderr)
+      elif loot is "R":
+        self.REFLECTION.append(user)
+        print("[?] %s obtained an Amulet of Reflection"%(user), file=sys.stderr)
+      elif loot is "J":
+        self.JUMPBOOT.append(user)
+        print("[?] %s obtained Jumping Boots"%(user), file=sys.stderr)
+      elif loot is "H":
+        self.HEALING.append(user)
+        print("[?] %s obtained a Book of Healing"%(user), file=sys.stderr)
+
+      # Random chance to spawn a mimic
+      if randint(1,15) == 9:
+        self.npc_manager.spawnMonster("?MimicO", 15, 1, self.players[user].get("pos"), moveset="wasd")
+
   def EventUpdate(self):
     """
     depth and entity events
@@ -256,6 +245,23 @@ class DeathFinder():
     for dep in playerlocations:
       if dep[1] > depth:
         depth = dep[1]
+      if dep in self.loot:
+        for user in self.players:
+          if self.players[user].get("pos") == dep:
+            self.ObtainLoot(user)
+            self.loot.remove(dep)
+            break
+
+    if len(self.tempwalls) > 0:
+      rmt = []
+      for magicw in self.tempwalls:
+        if magicw[0] < self.epoch:
+          for pos in magicw[1]:
+            self.magicwalls.remove(pos)
+          rmt.append(magicw)
+      if len(rmt) > 0:
+        for holder in rmt:
+          self.tempwalls.remove(holder)
 
     self.mapload_optimizer(depth)
 
@@ -267,7 +273,6 @@ class DeathFinder():
       for user in dead:
         if user in list(self.players.keys()):
           self.players.pop(user)
-
 
   def Render(self, user):
 
@@ -310,10 +315,17 @@ class DeathFinder():
                   self.ascii += __character
               elif (x,y) in self.magicwalls:
                 view += ":"
+              elif (x,y) in self.loot:
+                view += "?"
               elif (x,y) in self.walls:
                 view += "#"
               else:
                 view += "."
+          elif user in self.ESP and (x,y) in list(_NPC.keys()):
+            view += _NPC.get((x,y))
+            __character = _NPC.get((x,y))
+            if __character != None and __character not in self.ascii:
+              self.ascii += __character
           else:
             view += " "
 
@@ -322,26 +334,17 @@ class DeathFinder():
           view = "\n"
         elif view.startswith(" ") == False:
           view = view.replace("  ", "").replace(". ", ".")
-        elif view.startswith(" "):
-          _rpn = False
-          _nview = ""
-          for _chr in view:
-            if _chr in self.ascii:
-              _rpn = True
-            if _rpn == True and _chr == " ":
-              break
-            _nview += _chr
         omni_view += view
         view = ""
 
-      omni_view = omni_view.replace(" "*5, "5").replace("\n\n","").replace("."*4, "4").replace("5"*3,"3").replace("#"*6, "6").replace("\n","!n")
+      omni_view = omni_view.replace(" "*5, "5").replace("\n\n\n","\n").replace("."*4, "4").replace("5"*3,"3").replace("#"*6, "6").replace("\n","!n")
       return omni_view
     else:
       return "User not in list of players"
 
   def que_data(self, user, data):
     """
-    This function adds HTTP requests from players to the list of data that needs to be updated.
+    This function ques the player data
     """
     if user in list(self.players.keys()):
       if user not in self.player_que:
@@ -368,6 +371,21 @@ class DeathFinder():
     for user in self.player_que_data:
       self.players.update(user)
 
+  def inventoryPlayer(self, user):
+    inv = ""
+    if user in (self.HEALING + self.JUMPBOOT + self.ESP + self.REFLECTION + self.SPELLWALL):
+      if user in self.HEALING:
+        inv += "H"
+      if user in self.JUMPBOOT:
+        inv += "J"
+      if user in self.ESP:
+        inv += "E"
+      if user in self.REFLECTION:
+        inv += "R"
+      if user in self.SPELLWALL:
+        inv += "S"
+    return inv
+
   def BroadcastUpdate(self):
     """
     USER: name, (x,y), status, epoch\n
@@ -377,8 +395,11 @@ class DeathFinder():
     becon.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
     becon_addr = (self.multicast, self.mport_out)
     for username in self.player_que:
-    #for username in list(self.players.keys()):
-      packet = "USER: %s, %s, %s, %s\n"%(username, str(self.players[username].get("pos")), str(self.players[username].get("status")), self.epoch)
+      hp = self.players[username].get("status")
+      xp = round(self.players[username].get("xp"),2)
+      pos = str(self.players[username].get("pos")).replace(" ","")
+      inv = self.inventoryPlayer(username)
+      packet = "USER: %s %s HP:%s XP:%s IV:%s E:%s\n"%(username, pos, hp, xp, inv, self.epoch)
       packet += self.Render(username)
       becon.sendto(packet.encode(), becon_addr)
     becon.close()
@@ -398,7 +419,43 @@ class DeathFinder():
       status = self.players[user]["status"]
       action = self.players[user]["action"][:1]
 
-      if action in "wasd":
+      # E : Amulet of ESP
+      # S : Book of Magic Shield
+      # R : Amulet of Reflection
+      # J : Jumping Boots
+      # H : Book of Healing
+      if action == "!":
+        action = self.players[user]["action"][:3]
+
+        if user in self.SPELLWALL and action.upper() == "!S":
+          barrier = circle_pog(x,y,3)
+          self.magicwalls += barrier
+          self.walls += barrier
+          self.tempwalls.append([self.epoch+5, barrier])
+          print("[*] %s read the Book of Magic Shield"%(user), file=sys.stderr)
+
+        elif user in self.JUMPBOOT and action.upper().startswith("!J"):
+          moveopt = {
+                  "!JW":(x,y-2),
+                  "!JS":(x,y+2),
+                  "!JD":(x+2,y),
+                  "!JA":(x-2,y),
+                  "!JE":(x+2,y-2),
+                  "!JQ":(x-2,y-2),
+                  "!JZ":(x-2,y+2),
+                  "!JC":(x+2,y+2)
+          }
+          if action.upper() in list(moveopt.keys()):
+            if moveopt[action.upper()] not in (self.walls + _rlwalls):
+              self.players[user]["pos"] = moveopt[action.upper()]
+              print("[*] %s jumped very far"%(user), file=sys.stderr)
+
+        elif user in self.HEALING and action.upper() == "!H":
+          # todo: trade xp for hp
+          for _pl in self.players:
+            self.players[_pl]["status"] += choice([0,0.5,0.5,1])
+
+      elif action in "wasd":
         if action == "w":
           if (y-1 < 0) or ((x, y-1) in self.walls+_rlwalls):
             pass
@@ -504,7 +561,7 @@ class DeathFinder():
       self.players[user]["status"] -= hplost
       self.players[user]["xp"] += xpgain
       if xpgain > 0.01:
-        print("%s] Hp(%s)-%s XP+%s "%(user, _hp, hplost, xpgain), file=sys.stderr)
+        print("[%s] Hp(%s)-%s XP+%s "%(user, _hp, hplost, xpgain), file=sys.stderr)
 
     self.BroadcastUpdate()
     self.player_que = []
@@ -614,7 +671,7 @@ if __name__ == "__main__":
 
   recieving = 15003
   sending   = 15002
-  Game = DeathFinder(40,200, (MCAST_GRP, sending, recieving), address, wait=0.15)
+  Game = DeathFinder(40,200, (MCAST_GRP, sending, recieving), address, wait=1)
 
   build = building_pog(30,2,6,4,"left")
   Game.bricks += build[0]
