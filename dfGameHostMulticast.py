@@ -81,7 +81,7 @@ class DeathFinder():
     self.doors = []
     self.bricks = []
     self.magicwalls = []
-    self.tempwalls = []
+    self.MAGICWALL = []
     self.dark = []
     self.loot = [(2,82),(33,4),(34,4),(5,5),(5,6),(5,7),(5,8)]
     self.ascii = ".&+@#:;?"
@@ -195,16 +195,16 @@ class DeathFinder():
             self.loot.remove(dep)
             break
 
-    if len(self.tempwalls) > 0:
+    if len(self.MAGICWALL) > 0:
       rmt = []
-      for magicw in self.tempwalls:
+      for magicw in self.MAGICWALL:
         if magicw[0] < self.epoch:
           for pos in magicw[1]:
             self.magicwalls.remove(pos)
           rmt.append(magicw)
       if len(rmt) > 0:
         for holder in rmt:
-          self.tempwalls.remove(holder)
+          self.MAGICWALL.remove(holder)
 
     self.mapload_optimizer(depth)
 
@@ -384,19 +384,19 @@ class DeathFinder():
           barrier = circle_pog(x,y,3)
           self.magicwalls += barrier
           self.walls += barrier
-          self.tempwalls.append([self.epoch+5, barrier])
+          self.MAGICWALL.append([self.epoch+5, barrier])
           print("[*] %s reads the Book of Magic Shield"%(user), file=sys.stderr)
 
         elif user in self.JUMPBOOT and action.upper().startswith("!J"):
           moveopt = {
-                  "!JW":(x,y-2),
-                  "!JS":(x,y+2),
-                  "!JD":(x+2,y),
-                  "!JA":(x-2,y),
-                  "!JE":(x+2,y-2),
-                  "!JQ":(x-2,y-2),
-                  "!JZ":(x-2,y+2),
-                  "!JC":(x+2,y+2)
+            "!JW":(x,y-2),
+            "!JS":(x,y+2),
+            "!JD":(x+2,y),
+            "!JA":(x-2,y),
+            "!JE":(x+2,y-2),
+            "!JQ":(x-2,y-2),
+            "!JZ":(x-2,y+2),
+            "!JC":(x+2,y+2)
           }
           if action.upper() in list(moveopt.keys()):
             if moveopt[action.upper()] not in (self.walls + _rlwalls):
