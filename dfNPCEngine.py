@@ -14,6 +14,7 @@ class DeathFinderNPC():
         "pos":(30,763),
         "moveset":"wasd",
         "size":5
+      }
     }
     self.ENEMY = {
       "goblin":{
