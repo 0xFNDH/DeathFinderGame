@@ -9,7 +9,11 @@ class DeathFinderNPC():
         "pos":(30,73),
         "moveset":"ad",
         "size":2
-        }
+        },
+      "!JaviHydor":{
+        "pos":(30,763),
+        "moveset":"wasd",
+        "size":5
     }
     self.ENEMY = {
       "goblin":{
