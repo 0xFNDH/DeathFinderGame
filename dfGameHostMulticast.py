@@ -144,7 +144,7 @@ class DeathFinder():
       # R : Amulet of Reflection
       # J : Jumping Boots
       # H : Book of Healing
-      loot = choice("ESRJH")
+      loot = choice("".join(set("ESRJH").difference(self.inventoryPlayer(user))))
 
       if loot == "E":
         self.ESP.append(user)
@@ -177,7 +177,7 @@ class DeathFinder():
         depth = dep[1]
       if dep in self.loot:
         for user in self.players:
-          if self.players[user].get("pos") == dep:
+          if self.players[user].get("pos") == dep and len(self.inventoryPlayer(user)) < 3:
             self.ObtainLoot(user)
             self.loot.remove(dep)
             break
