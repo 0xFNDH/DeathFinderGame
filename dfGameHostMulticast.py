@@ -398,8 +398,8 @@ class DeathFinder():
         elif user in self.HEALING and action.upper() == "!H":
           # todo: trade xp for hp
           for _pl in self.players:
-            if self.players[_pl]["status"] <= 10:
-              self.players[_pl]["status"] += choice([0,0.5,0.5,1,1])
+            if self.players[_pl]["status"] <= 20:
+              self.players[_pl]["status"] += choice([0,1,1,1.5,2])
               self.players[user]["xp"] -= 0.04
 
       elif action in "wasd":
