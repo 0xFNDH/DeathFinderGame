@@ -70,6 +70,7 @@ class DeathFinder():
     self.MAGICWALL = []
     self.dark = []
     self.paralysis = []
+    self.afflictions = []
     self.loot = [(2,82),(33,4),(34,4),(5,5),(5,6),(5,7),(5,8)]
     self.ascii = ".&+@#:;?!,"
 
@@ -108,23 +109,23 @@ class DeathFinder():
       self.yminrender = self.ymaxrender
       self.ymaxrender = chunks[chunks.index(self.ymaxrender)+1]
       rerender = True
-
+    
     if rerender == True:
       print("[M] Rendering Map from File %s:%s\n"%(self.yminrender, self.ymaxrender), file=sys.stderr)
       _rwall, _rdark, _rspawn = MapLoad(ymin=self.yminrender, ymax=self.ymaxrender)
-
+      
       for solid in _rwall:
         if solid not in self.bricks:
           self.bricks.append(solid)
-
+      
       for dark in _rdark:
         if dark not in self.dark:
           self.dark.append(dark)
-
+      
       for spawn in _rspawn:
         monster = self.npc_manager.randomMonster(spawn[1])
         self.npc_manager.spawnMonster(monster[0], monster[1], monster[2], spawn)
-
+      
       del _rwall
       del _rdark
       del _rspawn
@@ -136,7 +137,15 @@ class DeathFinder():
     objects.append(self.magicwalls)
     objects.append(self.npc_manager.allnpc_but("___"))
     return objects
-
+  
+  def getAfflictions(self, user):
+    afflicted = ""
+    if user in list(self.players.keys()):
+      if user in self.paralysis:
+        afflicted += "P"
+      
+    return afflicted
+  
   def ObtainLoot(self, user):
     if user in list(self.players.keys()):
       # E : Amulet of ESP
@@ -341,7 +350,8 @@ class DeathFinder():
       xp = round(self.players[username].get("xp"),2)
       pos = str(self.players[username].get("pos")).replace(" ","")
       inv = self.inventoryPlayer(username)
-      packet = "USER: %s %s HP:%s XP:%s IV:%s E:%s\n"%(username, pos, hp, xp, inv, self.epoch)
+      afflict = self.affliction(username)
+      packet = "USER: %s %s HP:%s XP:%s IV:%s E:%s A:%s\n"%(username, pos, hp, xp, inv, self.epoch, afflict)
       packet += self.Render(username)
       becon.sendto(packet.encode(), becon_addr)
     becon.close()
