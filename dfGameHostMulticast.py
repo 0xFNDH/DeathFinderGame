@@ -141,15 +141,15 @@ class DeathFinder():
       del _rdark
       del _rspawn
 
-  def all_solids(self):
+  def all_solids(self, allow="___"):
     """
     Lists all the solid objects that regular characters cannot walk through.
     """
     objects = []
-    objects.append(self.everyone_but("___"))
+    objects.append(self.everyone_but(allow))
     objects.append(self.bricks)
     objects.append(self.magicwalls)
-    objects.append(self.npc_manager.allnpc_but("___"))
+    objects.append(self.npc_manager.allnpc_but(allow))
     return objects
   
   def getAfflictions(self, user):
