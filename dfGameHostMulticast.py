@@ -393,12 +393,11 @@ class DeathFinder():
           if action.upper() in list(moveopt.keys()):
             if moveopt[action.upper()] not in (self.walls + _rlwalls):
               self.players[user]["pos"] = moveopt[action.upper()]
-              print("[*] %s jumped very far"%(user), file=sys.stderr)
 
         elif user in self.HEALING and action.upper() == "!H":
           # todo: trade xp for hp
           for _pl in self.players:
-            if self.players[_pl]["status"] <= 20:
+            if self.players[_pl]["status"] <= 15:
               self.players[_pl]["status"] += choice([0,1,1,1.5,2])
               self.players[user]["xp"] -= 0.04
 
