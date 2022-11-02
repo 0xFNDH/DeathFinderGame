@@ -257,6 +257,8 @@ class DeathFinder():
                 view += ":"
               elif (x,y) in self.loot:
                 view += "?"
+              elif (x,y) in self.paralysis:
+                view += ","
               elif (x,y) in self.walls:
                 view += "#"
               else:
@@ -358,7 +360,10 @@ class DeathFinder():
       x,y = self.players[user]["pos"]
       status = self.players[user]["status"]
       action = self.players[user]["action"][:1]
-
+      
+      if (x,y) in self.paralysis:
+        action = " "
+      
       # E : Amulet of ESP
       # S : Book of Magic Shield
       # R : Amulet of Reflection
