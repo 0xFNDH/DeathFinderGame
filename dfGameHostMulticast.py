@@ -1,19 +1,5 @@
 """
-Objective: Downgrade for simplicity
-
-Client only sends after recieving
-Server only sends after recieving
-Syncronious
-
-Process:
-        1.) Server listen
-        2.) Client sends
-        3.) Server processes
-        4.) Client listen
-        5.) Server sends
-        6.) Client processs
-        ^^  Repeat
-
+Death Finder
 """
 
 import sys, math, time, socket, traceback, string
@@ -83,8 +69,9 @@ class DeathFinder():
     self.magicwalls = []
     self.MAGICWALL = []
     self.dark = []
+    self.paralysis = []
     self.loot = [(2,82),(33,4),(34,4),(5,5),(5,6),(5,7),(5,8)]
-    self.ascii = ".&+@#:;?"
+    self.ascii = ".&+@#:;?!,"
 
     self.ESP = ["Admin"]
     self.SPELLWALL = []
@@ -478,6 +465,12 @@ class DeathFinder():
       actionopt = self.npc_manager.NPC[npc]["moveset"]
       actionopt += "."*size
       action = choice(actionopt)
+      
+      if npc == "!JaviHydor":
+        _old_ = building_pog(x-1,y-1,2,2,None,False)[0]
+        for o in _old_:
+          if o in self.paralysis:
+            self.paralysis.remove(o)
 
       if action in "wasd":
         if action == "w":
@@ -500,7 +493,10 @@ class DeathFinder():
             pass
           else:
             x -= 1
-
+        
+        if npc == "!JaviHydor":
+          self.paralysis += building_pog(x-1,y-1,2,2,None,False)[0]
+        
         self.npc_manager.NPC[npc]["pos"] = (x,y)
 
     for user in self.players:
