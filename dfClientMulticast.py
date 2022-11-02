@@ -2,7 +2,7 @@ import socket, time, sys
 from binascii import hexlify, unhexlify
 
 Multicast = "224.0.0.251"
-Username = "Jacob"
+Username = ""
 
 Color = True
 Unicode = False
@@ -75,9 +75,31 @@ class GameHandler():
     self.health = health
     self.experience = experience
     self.inventory = inventory
-    print(self.infobar(health, self.HP, experience, self.XP, inventory, position, epoch))
-    self.hpxp_dialog(health, experience)
-    self.item_dialog(inventory)
+    infobar = self.infobar(health, self.HP, experience, self.XP, inventory, position, epoch)
+    if Color == True:
+      if health < 0:
+        hpbar = "(%s) HP[\N{ESC}[41;5m   Y O U  D I E D   \N{ESC}[m]\n"%(Username)
+        infobar = hpbar+infobar.split("\n")[1]
+      elif health < 1:
+        hpbar = ("(%s) HP["%(Username))+(" "*15)+"]\n"
+        infobar = hpbar+infobar.split("\n")[1]
+      elif health < 5:
+        hpbar = infobar.split("\n")[0].replace("#","\N{ESC}[41m \N{ESC}[m").replace(":","\N{ESC}[101;5m*\N{ESC}[m")
+        infobar = hpbar + "\n" + infobar.split("\n")[1]
+      else:
+        hpbar = infobar.split("\n")[0].replace("#","\N{ESC}[47m \N{ESC}[m").replace(":","\N{ESC}[107;5m*\N{ESC}[m")
+        infobar = hpbar + "\n" + infobar.split("\n")[1]
+    if health > 0:
+      self.hpxp_dialog(health, experience)
+      self.item_dialog(inventory)
+    else:
+      self.HP = 10.0
+      self.XP = 0.0
+      self.INV = ""
+      self.health = 10.0
+      self.experience = 0.0
+      self.inventory = ""
+      time.sleep(3)
   
   def infobar(self, health, hp, experience, xp, inventory, position, epoch):
     bar = "(%s)"%Username
@@ -111,23 +133,23 @@ class GameHandler():
       self.INV = inv
         
   def hpxp_dialog(self, hp, xp):
-    if float(hp) < 0.0:
-      print("You died.")
     
-    elif float(hp) < self.HP:
+    if float(hp) < self.HP:
       damage = self.HP-float(hp)
-      if damage < 2.0:
-        print("The opponent's attack hits you.")
-      elif damage < 4.0:
+      if damage <= 0.2:
+        print("The enemy's attack does grazes you.")
+      elif damage <= 2.0:
+        print("The enemy's attack hits you.")
+      elif damage <= 4.0:
         print("You receive a hard strike from the enemy.")
-      elif damage < 6.0:
-        print("You feel a sharp pain. You are in danger.")
-      elif damage < 10.0:
-        print("Your mind goes into shock as you are almost dead.")
-      elif damage < 15.0:
-        print("All your bones break as the monster lands its attack.")
+      elif damage <= 6.0:
+        print("You feel a sharp pain. You are in danger.", file=sys.stderr)
+      elif damage <= 10.0:
+        print("Your mind goes into shock as you are almost dead.", file=sys.stderr)
+      elif damage <= 15.0:
+        print("Your bones break as the monster lands its attack.", file=sys.stderr)
       elif damage < 25.0:
-        print("Your body is incinerated.")
+        print("Your body is incinerated.", file=sys.stderr)
         
     elif float(hp) > self.HP:
       heal = float(hp)-self.HP
@@ -153,15 +175,20 @@ class GameHandler():
     self.HP = float(hp)
     self.XP = float(xp)
     
-hander = GameHandler()
+handler = GameHandler()
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
 s.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
 s.settimeout(3)
 
 while True:
-
-  pkt = "USER: %s, %s"%(Username, input("> "))
+  cmd = input("> ")
+  if cmd[:1] in "QWEASDZC":
+    if "J" in handler.inventory:
+      cmd = "!J"+cmd[:1]
+    else:
+      cmd = cmd[:1].lower()+cmd[1:]
+  pkt = "USER: %s, %s"%(Username, cmd)
   s.sendto(pkt.encode(), (Multicast, 15003))
   data = b"."
   try:
@@ -175,7 +202,7 @@ while True:
       mapdata = unify(mapdata)
     print(mapdata)
       
-    hander.parse(data)
+    handler.parse(data)
   except KeyboardInterrupt:
     break
   except Exception as e:
