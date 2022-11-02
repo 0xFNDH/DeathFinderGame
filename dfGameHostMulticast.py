@@ -9,17 +9,23 @@ from dfStruct import *
 from random import randint, choice
 
 def _decompress(comp):
+  """
+  Map data is compressed before being sent out of the network to save space.
+  This function decompresses compressed data back to the display state (NOT the original state).
+  """
   comp = comp.replace("3","555").replace("4", "."*4).replace("5"," "*5).replace(";"," ").replace("6","#"*6).replace("!n","\n")
   return comp
 
 def distance(p1, p2):
+  """
+  Remember that stuff you forgot in high school math class? That's what this is.
+  """
   return math.sqrt(((p2[0]-p1[0])**2) + ((p2[1]-p1[1])**2))
 
 def IV(data, true_false=False, limit=600):
   """
-  Input Validation - Returns sanitized data.
-  true_false - Instead of returning data, th
-  returns True or False depending on if the data is clean.
+  IV sanitizes strings from client inputs.
+  Enableing 'true_false' will return True if the string clean.
   """
   assert type(true_false) == bool
   data = str(data)[:limit]
@@ -70,7 +76,6 @@ class DeathFinder():
     self.MAGICWALL = []
     self.dark = []
     self.paralysis = []
-    self.afflictions = []
     self.loot = [(2,82),(33,4),(34,4),(5,5),(5,6),(5,7),(5,8)]
     self.ascii = ".&+@#:;?!,"
 
@@ -91,6 +96,9 @@ class DeathFinder():
     self.npc_manager = DeathFinderNPC()
 
   def everyone_but(self, username):
+    """
+    Returns all the player locations except the specified player.
+    """
     everyspot = []
     for user in self.players:
       if user != username:
@@ -98,6 +106,9 @@ class DeathFinder():
     return everyspot
 
   def mapload_optimizer(self, depth):
+    """
+    This function loads the map in chunks to save/optimize memory.
+    """
     rerender = False
     chunks = [40,80,120,160,200,240,280,320]
 
@@ -131,6 +142,9 @@ class DeathFinder():
       del _rspawn
 
   def all_solids(self):
+    """
+    Lists all the solid objects that regular characters cannot walk through.
+    """
     objects = []
     objects.append(self.everyone_but("___"))
     objects.append(self.bricks)
@@ -139,6 +153,9 @@ class DeathFinder():
     return objects
   
   def getAfflictions(self, user):
+    """
+    Returns the negative status effects that are applied to specific players.
+    """
     afflicted = ""
     if user in list(self.players.keys()):
       if user in self.paralysis:
@@ -147,6 +164,10 @@ class DeathFinder():
     return afflicted
   
   def ObtainLoot(self, user):
+    """
+    Players that find loot will be given a random skill/ability/magic item.
+    Three items will be given at max and finding a loot has a 1/15 chance to spawn a mimic.
+    """
     if user in list(self.players.keys()):
       # E : Amulet of ESP
       # S : Book of Magic Shield
@@ -171,19 +192,21 @@ class DeathFinder():
         self.HEALING.append(user)
         print("[?] %s obtained a Book of Healing"%(user), file=sys.stderr)
 
-      # Random chance to spawn a mimic
-      if randint(1,15) == 9:
+      if randint(1,15) == 1 and len(loot) > 0:
         self.npc_manager.spawnMonster("?MimicO", 15, 1, self.players[user].get("pos"), moveset="wasd")
 
   def EventUpdate(self):
     """
-    depth and entity events
+    This creates the sequence of events that occur each epoch.
+    Loot is limited to three items and map optimization is checked.
+    Depth is the most important aspect of EventUpdate as the Y-Axis determines when events occur.
     """
     depth = 0
     playerlocations = self.everyone_but("___")
     for dep in playerlocations:
       if dep[1] > depth:
         depth = dep[1]
+      
       if dep in self.loot:
         for user in self.players:
           if self.players[user].get("pos") == dep and len(self.inventoryPlayer(user)) < 3:
@@ -224,6 +247,10 @@ class DeathFinder():
             self.REFLECTION.remove(user)
 
   def Render(self, user):
+    """
+    Too much to explain here. This fucntion renders all the visual content for each player.
+    This function could use more optimization.
+    """
 
     if user in list(self.players.keys()):
       userx = self.players[user]["pos"][0]
@@ -295,7 +322,7 @@ class DeathFinder():
 
   def que_data(self, user, data):
     """
-    Function ques the player data
+    Client data recieved over the network is put into a list to be accessed when the next epoch occurs.
     """
     if user in list(self.players.keys()):
       if user not in self.player_que:
@@ -323,6 +350,9 @@ class DeathFinder():
       self.players.update(user)
 
   def inventoryPlayer(self, user):
+    """
+    Returns the inventory of any given player.
+    """
     inv = ""
     if user in (self.HEALING + self.JUMPBOOT + self.ESP + self.REFLECTION + self.SPELLWALL):
       if user in self.HEALING:
@@ -339,8 +369,9 @@ class DeathFinder():
 
   def BroadcastUpdate(self):
     """
-    USER: name, (x,y), status, epoch\n
-    ....@....!n
+    Multicast socket for pushing out player data over the network.
+    USER: Username (x,y) HP:10 XP:0.0 IV:None E:1 A:None
+    ..###..#!n....@....!n........!n
     """
     becon = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     becon.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
@@ -358,7 +389,7 @@ class DeathFinder():
 
   def NextEpoch(self):
     """
-    If you dont iterate through players twice the first player cant see the last player's move
+    Everything.
     """
     self.UpdatePlayers()
     self.epoch += 1
