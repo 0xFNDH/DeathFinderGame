@@ -1,1 +1,48 @@
-# DeathFinderGame
+# [df] Death Finder Game
+
+## dfAbout
+
+Death Finder is a LAN multiplayer rouge-like RPG developed in Python.
+The objective is for players to reach the end of the dungeon by fighting
+monsters with the help of other players. The game takes inspiration from [**Nethack**](https://nethack.org/) and shares some of the same features.
+
+> "I started this project as a fun idea but ended up creating something more than I would have excepted myself to be cablable of. All I wanted was to create a new world for my friends and I to explore."
+> -Tampa Guard
+
+## dfMulticast
+
+In the latest `version 3.0`, the game was swapped to multicast sockets which bypassed network restrictions and allowed for clients to play the game in different subnets. Multicast also reduced the amount of strain on the network when multiple groups were on at the same time. The max player limit was increased to 15 as a result.
+
+>Death Finder `version 2.0`, was converted to support UDP broadcasting which had many downsides and did not preform reliably. Packet sizes were limited to `~1800 bytes` max and the game did not operate across subnets.
+>>Death Finder `version 1.0`, used TCP sockets and HTTP to communicate with the server. Players sent actions through `POST` requests and it was easy to operate. But network restrictions prevented devices from accessing the game's server.
+
+## dfControls
+
+    Movement Inputs:
+    ----------------
+    
+         diagonal     up    diagonal
+                 \    |    /
+                  [Q][W][E]
+            left -[A][S][D]- right
+                  [Z]   [C]
+                 /         \
+         diagonal           diagonal
+        
+        Lowercase WASD is used by default.
+        
+        Obtaining 'JUMPBOOTS' will enable Shift+WASD.
+    
+    
+    Magic Inputs:
+    -------------
+        
+        Book of Healing:
+            !H - Slightly heals all users but subtracts XP.
+        
+        Shield Scroll:
+            !S - Spawns a 5x5 barrier around player.
+        
+    
+    end.
+
