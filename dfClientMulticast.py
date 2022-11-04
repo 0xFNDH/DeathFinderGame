@@ -28,7 +28,11 @@ except AttributeError:
 ingress.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
 ingress.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 2)
 
-ingress.bind((Multicast, 15002))
+try:
+  ingress.bind((Multicast, 15002))
+except:
+  ingress.bind(("", 15002))
+
 host = getLANIP()
 ingress.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, socket.inet_aton(host))
 ingress.setsockopt(socket.SOL_IP, socket.IP_ADD_MEMBERSHIP,
