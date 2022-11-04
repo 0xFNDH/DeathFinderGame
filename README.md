@@ -6,8 +6,8 @@ Death Finder is a LAN multiplayer rouge-like RPG developed in Python.
 The objective is for players to reach the end of the dungeon by fighting
 monsters with the help of other players. The game takes inspiration from [**Nethack**](https://nethack.org/) and shares some of the same features.
 
-> "I started this project as a fun idea but ended up creating something more than I would have excepted myself to be cablable of. All I wanted was to create a new world for my friends and I to explore."
-> -Tampa Guard
+> "I started this project as a fun idea but ended up creating something more than I would have excepted. All I wanted was to create a new world for my friends and I to explore."
+> -TampaGuard
 
 ## dfMulticast
 
