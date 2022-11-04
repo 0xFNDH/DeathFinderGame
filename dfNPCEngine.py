@@ -84,17 +84,17 @@ class DeathFinderNPC():
 
   def randomMonster(self, depth):
     easy   = ["goblin", "goblin", "goblin", "goblin", "spider", "orc", "orc", "rat", "blobTar", "nymph"]
-    medium = ["Snake", "GoblinHog", "HogGoblin", "Kobold", "GoblinHog", "qsucubus", "?mimic", "Orge", "Pudding"]
-    hard   = ["#StoneGolumn", "?Mimic", "Basilisk", "Lich", "ArchAngel", "LordofGoblins", "Naga"]
+    medium = ["Snake", "Goblin", "HobGoblin", "Kobold", "GoblinHog", "qsucubus", "?mimic", "Orge", "Pudding"]
+    hard   = ["#StoneGolumn", "?Mimic", "Basilisk", "Lich", "ArchAngel", "Naga"]
     ohio   = ["Wyvern", "Dragon", "demonPrince"]
     if depth < 80:
       monster = choice(easy)
     elif depth < 100:
-      monster = choice(easy+medium*2)
+      monster = choice(easy+medium)
     elif depth < 130:
-      monster = choice(hard+medium)
+      monster = choice(easy+medium+hard)
     elif depth < 160:
-      monster = choice(hard+medium*3)
+      monster = choice(medium+hard)
     elif depth == 999:
       monster = choice(("Unicorn","Imp"))
     else:
