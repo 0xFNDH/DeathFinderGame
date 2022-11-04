@@ -381,7 +381,7 @@ class DeathFinder():
       xp = round(self.players[username].get("xp"),2)
       pos = str(self.players[username].get("pos")).replace(" ","")
       inv = self.inventoryPlayer(username)
-      afflict = self.affliction(username)
+      afflict = self.getAfflictions(username)
       packet = "USER: %s %s HP:%s XP:%s IV:%s E:%s A:%s\n"%(username, pos, hp, xp, inv, self.epoch, afflict)
       packet += self.Render(username)
       becon.sendto(packet.encode(), becon_addr)
