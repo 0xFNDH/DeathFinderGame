@@ -38,8 +38,6 @@ In the latest `version 3.0`, the game was swapped to multicast sockets which byp
 | `rat`    | `r` | `1`
 | `Snake`  | `S` | `2-4`
 | `Goblin` | `G` | `2-4`
-| `Hob Goblin` | `H` | `2-4`
-| `Orge`   | `O` | `2-4`
 | `succubus` | `q` | `2-4`
 | `Kobold` | `K` | `2-4`
 | `Pudding`| `P` | `2-4`
