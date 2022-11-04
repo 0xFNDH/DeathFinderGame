@@ -661,7 +661,7 @@ def getLANIP():
 
 if __name__ == "__main__":
   address = getLANIP()
-  MCAST_GRP = "224.0.0.251"
+  MCAST_GRP = "224.0.0.1"
 
   recieving = 15003
   sending   = 15002
