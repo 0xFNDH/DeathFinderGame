@@ -11,7 +11,7 @@ class DeathFinderNPC():
         "size":2
         },
       "!JaviHydor":{
-        "pos":(30,763),
+        "pos":(30,5),
         "moveset":"wasd",
         "size":5
       }
