@@ -1,7 +1,7 @@
 import socket, time, sys
 from binascii import hexlify, unhexlify
 
-Multicast = "224.0.0.251"
+Multicast = "224.0.0.1"
 Username = ""
 
 Color = True
@@ -106,7 +106,7 @@ class GameHandler():
   
   def infobar(self, health, hp, experience, xp, inventory, position, epoch):
     bar = "(%s)"%Username
-    bar += " HP[%s%s%s] "%("#"*int(health-abs(health-hp)),":"*abs(int(health-hp))," "*(20-int(health)))
+    bar += " HP[%s%s%s] "%("#"*int(health-int(health-hp)),":"*abs(int(health-hp))," "*(20-int(health)))
     if health < hp:
       bar += str(round(health-hp,1)) + " "
     elif health > hp:
