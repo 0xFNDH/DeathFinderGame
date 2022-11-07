@@ -27,6 +27,13 @@ In the latest `version 3.0`, the game was swapped to multicast sockets which byp
 | `Door`        | `+`    | Yes
 | `Item`        | `?`    | Yes
 | `Dark Floor`  | ` `    | Yes
+| `Leaf`        | `,`    | Yes
+| `Bush`        | `*`    | Slowed
+| `Branch`      | `=`    | Unstable
+| `Water`       | `^`    | Waterlogged
+| `Hill`        | `:`    | Yes
+| `Barrier`     | `"` or `:` | No
+| `Field`       | `'` or `.` | Yes
 
 |  Enemy        | Symbol | Level |
 | ------------- |:------:|:----:|
@@ -55,7 +62,7 @@ In the latest `version 3.0`, the game was swapped to multicast sockets which byp
 | NPC           | Symbol | Ability  |
 | ------------- |:------:|:--------:|
 | `Jacob`       | `J`    | No
-| `JimJim`      | `J`    | Healing
+| `JimJim`      | `J`    | Heals Player
 | `Jake`        | `J`    | No
 | `Hÿdor`       | `!`    | Wet Floor Sign
 
