@@ -82,6 +82,7 @@ class DeathFinder():
     self.dfLeaf = []
     
     self.paralysis = []
+    self.waterlogged = []
     self.loot = [(2,82),(33,4),(34,4),(5,5),(5,6),(5,7),(5,8)]
 
     self.ESP = ["Admin"]
@@ -171,9 +172,9 @@ class DeathFinder():
     afflicted = ""
     if user in list(self.players.keys()):
       if user in self.paralysis:
-         afflicted += "P"
-       elif user in self.waterlogged:
-         afflicted += "W"
+        afflicted += "P"
+      elif user in self.waterlogged:
+        afflicted += "W"
       
     return afflicted
   
