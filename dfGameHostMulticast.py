@@ -586,7 +586,7 @@ class DeathFinder():
       damage += int(self.players[user]["xp"])
       hplost, xpgain = self.npc_manager.inflict(position,damage)
       _hp = self.players[user]["status"]
-      if self.players[user]["status"] <= 20.0:
+      if self.players[user]["status"] < 20.0:
         hplost -= choice(([0]*10)+[0.5])
       if user in self.REFLECTION and randint(0,1) == 1:
         self.npc_manager.inflict(position,damage)
