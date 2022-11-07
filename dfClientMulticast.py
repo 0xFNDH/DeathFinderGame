@@ -56,10 +56,6 @@ def colour(visual, hydor=False, afflict=""):
   else:
     visual = visual.replace("@","\N{ESC}[46m@\N{ESC}[m")
   return visual
-  
-def unify(visual):
-  visual = visual.replace("#", u"\u2588").replace("?",u"\u2370").replace(":", u"\u2f55")
-  return visual
 
 class GameHandler():
 
