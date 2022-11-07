@@ -13,8 +13,9 @@ def dfMapLoad(mapfile="blight_map.txt", ymin=0, ymax=100, width=40):
   dfMound = []
   dfWater = []
   dfLeaf = []
+  dfDoor = []
+  dfLoot = []
 
-  width = width # dfGameHost Map Size
   y = ymin # Starting Y-Depth
   x = 0
 
@@ -41,8 +42,13 @@ def dfMapLoad(mapfile="blight_map.txt", ymin=0, ymax=100, width=40):
       elif char == "^":
         dfWater.append((x,y))
 
+      elif char == "+":
+        dfDoor.append((x,y))
+      elif char == "?":
+        dfLoot.append((x,y))
+
       x += 1
     y += 1
     x = 0
 
-  return dfWall, dfDark, dfSpawn, [dfBush, dfBranch, dfMound, dfWater, dfLeaf]
+  return dfWall, dfDark, dfSpawn, dfDoor, dfLoot [dfBush, dfBranch, dfMound, dfWater, dfLeaf]
