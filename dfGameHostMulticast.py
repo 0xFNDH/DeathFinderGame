@@ -173,10 +173,13 @@ class DeathFinder():
     afflicted = ""
     if user in list(self.players.keys()):
       if self.players[user].get("pos") in self.paralysis:
-        afflicted += "P"
+        if "R" not in self.inventoryPlayer(user):
+          afflicted += "P"
       if self.players[user].get("pos") in self.dfWater:
         if "b" not in self.inventoryPlayer(user):
           afflicted += "W"
+      if self.players[user].get("pos") in (self.dfBush + self.dfBranch):
+        afflicted += "C"
       
     return afflicted
   
@@ -265,10 +268,8 @@ class DeathFinder():
 
   def Render(self, user):
     """
-    Too much to explain here. This fucntion renders all the visual content for each player.
-    This function could use more optimization.
+    This fucntion renders all the visual content for each player.
     """
-
     if user in list(self.players.keys()):
       userx = self.players[user]["pos"][0]
       usery = self.players[user]["pos"][1]
@@ -472,8 +473,10 @@ class DeathFinder():
             if self.players[_pl]["status"] <= 15:
               self.players[_pl]["status"] += choice([0,1,1,1.5,2])
               self.players[user]["xp"] -= 0.04
-
+      
       elif action in "wasd":
+        if (x,y) in (self.dfBush + self.dfBranch + self.dfWater):
+          action = choice(([action]*2)+[" "])
         if action == "w":
           if (y-1 < 0) or ((x, y-1) in allsolids):
             pass
@@ -596,6 +599,8 @@ class DeathFinder():
         self.npc_manager.inflict(position,damage)
       else:
         self.players[user]["status"] -= hplost
+      if "W" in self.getAfflictions(user):
+        xpgain -= 0.05
       self.players[user]["xp"] += xpgain
       if xpgain > 0.01:
         print("[%s] Hp(%s)-%s XP+%s "%(user, round(_hp,3), hplost, xpgain), file=sys.stderr)
