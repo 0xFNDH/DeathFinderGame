@@ -60,12 +60,12 @@ class DeathFinder():
     self.players = {
       "DeathFinder": {
         "pos":  (1,2),
-        "status": 10,
+        "status": 20,
         "action": " ",
         "xp": 0.0},
       "Admin": {
         "pos":  (4,4),
-        "status": 10,
+        "status": 20,
         "action": " ",
         "xp": 0.0}
     }
@@ -366,7 +366,7 @@ class DeathFinder():
         spawnpoint = (randint(2, self.width-2), randint(2, 5))
       self.players.update({user:{
         "pos":  spawnpoint,
-        "status": 10,
+        "status": 20,
         "action": " ",
         "xp": 0.0}})
       self.player_que.append(user)
