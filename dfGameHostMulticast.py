@@ -74,6 +74,7 @@ class DeathFinder():
     self.magicwalls = []
     self.MAGICWALL = []
     self.dark = []
+    self.healthdot = []
     self.dfBranch = []
     self.dfBush = []
     self.dfMound = []
@@ -428,6 +429,9 @@ class DeathFinder():
       action = self.players[user]["action"][:1]
       if (x,y) in self.paralysis:
         action = " "
+      elif (x,y) in self.healthdot and status < 15:
+        self.players[user]["status"] += 1
+        print("[%s] Was healed by NPC"%(user), file=sys.stderr)
       
       # E : Amulet of ESP
       # S : Book of Magic Shield
@@ -491,6 +495,8 @@ class DeathFinder():
 
     for monster in self.npc_manager.ENEMY:
       allsolids = self.all_solids(monster)
+      if monster[:1] not in ["n","B"]:
+        allsolids += self.dfWater
       x,y = self.npc_manager.ENEMY[monster]["pos"]
       size = self.npc_manager.ENEMY[monster]["size"]
       actionopt = self.npc_manager.ENEMY[monster]["moveset"]
@@ -526,17 +532,24 @@ class DeathFinder():
 
     for npc in self.npc_manager.NPC:
       allsolids = self.all_solids(monster)
+      allsolids += self.dfWater
       x,y = self.npc_manager.NPC[npc]["pos"]
       size = self.npc_manager.NPC[npc]["size"]
       actionopt = self.npc_manager.NPC[npc]["moveset"]
       actionopt += "."*size
       action = choice(actionopt)
       
-      if npc == "!JaviHydor" and action != ".":
+      if npc == "!JaviHydor":
         _old_ = building_pog(x-1,y-1,2,2,None,False)[0]
         for o in _old_:
           if o in self.paralysis:
             self.paralysis.remove(o)
+       
+      elif npc == "JimJim":
+        _old_ = building_pog(x-1,y-1,2,2,None,False)[0]
+        for o in _old_:
+          if o in self.healthdot:
+            self.healthdot.remove(o)
 
       if action in "wasd":
         if action == "w":
@@ -562,6 +575,8 @@ class DeathFinder():
         
         if npc == "!JaviHydor":
           self.paralysis += building_pog(x-1,y-1,2,2,None,False)[0]
+        elif npc == "JimJim":
+          self.healthdot += building_pog(x-1,y-1,2,2,None,False)[0]
         
         self.npc_manager.NPC[npc]["pos"] = (x,y)
 
