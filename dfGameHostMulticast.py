@@ -476,7 +476,8 @@ class DeathFinder():
       
       elif action in "wasd":
         if (x,y) in (self.dfBush + self.dfBranch + self.dfWater):
-          action = choice(([action]*2)+[" "])
+          if randint(1,4) == 1:
+            action = " "
         if action == "w":
           if (y-1 < 0) or ((x, y-1) in allsolids):
             pass
