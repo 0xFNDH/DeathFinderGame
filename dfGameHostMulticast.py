@@ -539,7 +539,7 @@ class DeathFinder():
       actionopt += "."*size
       action = choice(actionopt)
       
-      if npc == "!JaviHydor":
+      if npc == "!JaviHydor" and action != ".":
         _old_ = building_pog(x-1,y-1,2,2,None,False)[0]
         for o in _old_:
           if o in self.paralysis:
