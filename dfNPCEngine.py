@@ -6,14 +6,19 @@ class DeathFinderNPC():
   def __init__(self):
     self.NPC = {
       "Jacob":{
-        "pos":(30,73),
-        "moveset":"ad",
+        "pos":(11,65),
+        "moveset":".",
         "size":2
         },
       "!JaviHydor":{
-        "pos":(30,5),
+        "pos":(11,75),
         "moveset":"wasd",
         "size":5
+      },
+      "JimJim":{
+        "pos":(8,82),
+        "moveset":"wasd",
+        "size":6
       }
     }
     self.ENEMY = {
@@ -23,12 +28,6 @@ class DeathFinderNPC():
          "size":1,
          "hp":5
          },
-      "Dragon":{
-         "pos":(50,80),
-         "moveset":"aaadds",
-         "size":-10,
-         "hp":25
-         }
     }
 
   def damagefield(self, mran=None):
