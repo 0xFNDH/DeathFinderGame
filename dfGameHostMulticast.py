@@ -425,6 +425,10 @@ class DeathFinder():
     for user in self.players:
       allsolids = self.all_solids(user)
       x,y = self.players[user]["pos"]
+      if 202 > y > 194:
+        allsolids += [(21,197), (22,197), (20,198), (21,198), (22,198), 
+                      (23,198), (23,199), (20,199), (21,199), (24,200),
+                      (24,197), (24,196), (19,196), (19,197), (19,200)]
       status = self.players[user]["status"]
       action = self.players[user]["action"][:1]
       if (x,y) in self.paralysis:
