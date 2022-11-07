@@ -395,7 +395,7 @@ class DeathFinder():
     self.epoch += 1
 
     for user in self.players:
-      allsolids = all_solids(user)
+      allsolids = self.all_solids(user)
       x,y = self.players[user]["pos"]
       status = self.players[user]["status"]
       action = self.players[user]["action"][:1]
@@ -465,7 +465,7 @@ class DeathFinder():
         self.players[user]["pos"] = (x,y)
 
     for monster in self.npc_manager.ENEMY:
-      allsolids = all_solids(monster)
+      allsolids = self.all_solids(monster)
       x,y = self.npc_manager.ENEMY[monster]["pos"]
       size = self.npc_manager.ENEMY[monster]["size"]
       actionopt = self.npc_manager.ENEMY[monster]["moveset"]
@@ -500,7 +500,7 @@ class DeathFinder():
         self.npc_manager.ENEMY[monster]["pos"] = (x,y)
 
     for npc in self.npc_manager.NPC:
-      allsolids = all_solids(monster)
+      allsolids = self.all_solids(monster)
       x,y = self.npc_manager.NPC[npc]["pos"]
       size = self.npc_manager.NPC[npc]["size"]
       actionopt = self.npc_manager.NPC[npc]["moveset"]
