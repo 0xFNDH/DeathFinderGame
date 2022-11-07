@@ -51,4 +51,4 @@ def dfMapLoad(mapfile="blight_map.txt", ymin=0, ymax=100, width=40):
     y += 1
     x = 0
 
-  return dfWall, dfDark, dfSpawn, dfDoor, dfLoot [dfBush, dfBranch, dfMound, dfWater, dfLeaf]
+  return dfWall, dfDark, dfSpawn, dfDoor, dfLoot, [dfBush, dfBranch, dfMound, dfWater, dfLeaf]
