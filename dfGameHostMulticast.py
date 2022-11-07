@@ -69,7 +69,6 @@ class DeathFinder():
         "action": " ",
         "xp": 0.0}
     }
-    self.walls = []
     self.doors = []
     self.bricks = []
     self.magicwalls = []
@@ -83,6 +82,7 @@ class DeathFinder():
     
     self.paralysis = []
     self.waterlogged = []
+    self.ascii = ".&+@#:;?!,=*^"
     self.loot = [(2,82),(33,4),(34,4),(5,5),(5,6),(5,7),(5,8)]
 
     self.ESP = ["Admin"]
@@ -148,6 +148,7 @@ class DeathFinder():
       self.dfMound += _rmix[2]
       self.dfWater += _rmix[3]
       self.dfLeaf += _rmix[4]
+      self.doors += _rdoor
       self.loot += _rloot
       
       del _rwall
@@ -159,10 +160,10 @@ class DeathFinder():
     Lists all the solid objects that regular characters cannot walk through.
     """
     objects = []
-    objects.append(self.everyone_but(allow))
-    objects.append(self.bricks)
-    objects.append(self.magicwalls)
-    objects.append(self.npc_manager.allnpc_but(allow))
+    objects += self.everyone_but(allow)
+    objects += self.bricks
+    objects += self.magicwalls
+    objects += self.npc_manager.allnpc_but(allow)
     return objects
   
   def getAfflictions(self, user):
@@ -293,25 +294,51 @@ class DeathFinder():
             if (x,y) == pos:
               view += "@"
             else:
-              if (x,y) in self.doors:
+              if (x,y) in self.bricks:
+                view += "#"
+              elif (x,y) in self.doors:
                 view += "+"
               elif (x,y) in self.dark and lit == False:
                 view += ";"
               elif (x,y) in _players:
                 view += "&"
+              elif (x,y) in self.dfLeaf:
+                view += ","
               elif (x,y) in list(_NPC.keys()):
                 view += _NPC.get((x,y))
+                __character = _NPC.get((x,y))
+                if __character != None and __character not in self.ascii:
+                  self.ascii += __character
               elif (x,y) in self.magicwalls:
-                view += ":"
+                view += '"'
               elif (x,y) in self.loot:
                 view += "?"
               elif (x,y) in self.paralysis:
-                view += ","
-              elif (x,y) in self.walls:
-                view += "#"
+                view += "'"
+              elif (x,y) in self.dfBranch:
+                view += "="
+              elif (x,y) in self.dfBush:
+                view += "*"
+              elif (x,y) in self.dfMound:
+                view += ":"
+              elif (x,y) in self.dfWater:
+                view += "^"
               else:
                 view += "."
-        view = view.rstrip() + "\n"
+          elif user in self.ESP and (x,y) in list(_NPC.keys()):
+            view += _NPC.get((x,y))
+            __character = _NPC.get((x,y))
+            if __character != None and __character not in self.ascii:
+              self.ascii += __character
+          else:
+            view += " "
+
+        view += "\n"
+        if any(sst in view for sst in self.ascii) == False:
+          view = "\n"
+        elif view[:1] in self.ascii:
+          #view = view.replace("  ", "").replace(". ", ".")
+          view = view[:-1].rstrip()+"\n"
         omni_view += view
         view = ""
 
@@ -399,7 +426,6 @@ class DeathFinder():
       x,y = self.players[user]["pos"]
       status = self.players[user]["status"]
       action = self.players[user]["action"][:1]
-      
       if (x,y) in self.paralysis:
         action = " "
       
@@ -414,7 +440,6 @@ class DeathFinder():
         if user in self.SPELLWALL and action[:2].upper() == "!S":
           barrier = circle_pog(x,y,3)
           self.magicwalls += barrier
-          self.walls += barrier
           self.MAGICWALL.append([self.epoch+5, barrier])
           print("[*] %s reads the Book of Magic Shield"%(user), file=sys.stderr)
 
@@ -430,7 +455,7 @@ class DeathFinder():
             "!JC":(x+2,y+2)
           }
           if action.upper() in list(moveopt.keys()):
-            if moveopt[action.upper()] not in (self.walls + _rlwalls):
+            if moveopt[action.upper()] not in allsolids:
               self.players[user]["pos"] = moveopt[action.upper()]
 
         elif user in self.HEALING and action[:2].upper() == "!H":
@@ -665,7 +690,6 @@ if __name__ == "__main__":
   recieving = 15003
   sending   = 15002
   Game = DeathFinder(40,305, (MCAST_GRP, sending, recieving), address, wait=0.5)
-
   build = building_pog(30,2,6,4,"left")
   Game.bricks += build[0]
   Game.doors.append(build[1])
