@@ -2,7 +2,7 @@
 Death Finder
 """
 
-import sys, math, time, socket, traceback, string
+import sys, math, time, socket, string
 from dfNPCEngine import DeathFinderNPC
 from dfMapRender import dfMapLoad
 from dfStruct import *
