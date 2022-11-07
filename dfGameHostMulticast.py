@@ -303,8 +303,8 @@ class DeathFinder():
                 view += ";"
               elif (x,y) in _players:
                 view += "&"
-              elif (x,y) in self.dfLeaf:
-                view += ","
+              elif (x,y) in self.dfBush:
+                view += "*"
               elif (x,y) in list(_NPC.keys()):
                 view += _NPC.get((x,y))
                 __character = _NPC.get((x,y))
@@ -318,12 +318,12 @@ class DeathFinder():
                 view += "'"
               elif (x,y) in self.dfBranch:
                 view += "="
-              elif (x,y) in self.dfBush:
-                view += "*"
               elif (x,y) in self.dfMound:
                 view += ":"
               elif (x,y) in self.dfWater:
                 view += "^"
+              elif (x,y) in self.dfLeaf:
+                view += ","
               else:
                 view += "."
           elif user in self.ESP and (x,y) in list(_NPC.keys()):
