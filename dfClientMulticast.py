@@ -28,11 +28,7 @@ except AttributeError:
 ingress.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
 ingress.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_LOOP, 2)
 
-try:
-  ingress.bind((Multicast, 15002))
-except:
-  ingress.bind(("", 15002))
-
+ingress.bind((Multicast, 15002))
 host = getLANIP()
 ingress.setsockopt(socket.SOL_IP, socket.IP_MULTICAST_IF, socket.inet_aton(host))
 ingress.setsockopt(socket.SOL_IP, socket.IP_ADD_MEMBERSHIP,
@@ -46,12 +42,12 @@ def _decompress(comp):
 def colour(visual, hydor=False):
   visual = visual.replace("@","\N{ESC}[46m@\N{ESC}[m").replace("&","\N{ESC}[46m&\N{ESC}[m").replace("g","\N{ESC}[32mg\N{ESC}[m").replace("D","\N{ESC}[41;5mD\N{ESC}[m")
   visual = visual.replace("G","\N{ESC}[32mG\N{ESC}[m").replace("W","\N{ESC}[41;5mW\N{ESC}[m").replace("?","\N{ESC}[1m?\N{ESC}[m").replace("s","\N{ESC}[37;2ms\N{ESC}[m").replace("S","\N{ESC}[93mS\N{ESC}[m")
-  visual = visual.replace("U","\N{ESC}[95;1mU\N{ESC}[m").replace(":","\N{ESC}[106;5m:\N{ESC}[m").replace("b","\N{ESC}[94;1;2mb\N{ESC}[m").replace("o","\N{ESC}[33mo\N{ESC}[m")
+  visual = visual.replace("U","\N{ESC}[95;1mU\N{ESC}[m").replace('"',"\N{ESC}[106;5m:\N{ESC}[m").replace("b","\N{ESC}[94;1;2mb\N{ESC}[m").replace("o","\N{ESC}[33mo\N{ESC}[m")
   visual = visual.replace("q","\N{ESC}[35mq\N{ESC}[m").replace("r","\N{ESC}[37mr\N{ESC}[m").replace("n","\N{ESC}[36mn\N{ESC}[m").replace("J","\N{ESC}[47mJ\N{ESC}[m")
   visual = visual.replace("P","\N{ESC}[34mP\N{ESC}[m").replace("K","\N{ESC}[31mK\N{ESC}[m").replace("L","\N{ESC}[42;5;1mL\N{ESC}[m").replace("!","\N{ESC}[103;1m!\N{ESC}[m")
   visual = visual.replace("O","\N{ESC}[32mO\N{ESC}[m").replace("A","\N{ESC}[107;5;1mA\N{ESC}[m")
   if hydor == True:
-    visual = visual.replace(",","\N{ESC}[36m.\N{ESC}[m")
+    visual = visual.replace("'","\N{ESC}[36m.\N{ESC}[m")
   return visual
   
 def unify(visual):
@@ -204,7 +200,7 @@ while True:
     mapdata = _decompress(data.decode().split("\n")[1])
     
     if Color == True:
-      if ",!" in mapdata or "!," in mapdata:
+      if "'!" in mapdata or "!'" in mapdata:
         mapdata = colour(mapdata, True)
       else:
         mapdata = colour(mapdata)
