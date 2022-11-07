@@ -75,9 +75,14 @@ class DeathFinder():
     self.magicwalls = []
     self.MAGICWALL = []
     self.dark = []
+    self.dfBranch = []
+    self.dfBush = []
+    self.dfMound = []
+    self.dfWater = []
+    self.dfLeaf = []
+    
     self.paralysis = []
     self.loot = [(2,82),(33,4),(34,4),(5,5),(5,6),(5,7),(5,8)]
-    self.ascii = ".&+@#:;?!,"
 
     self.ESP = ["Admin"]
     self.SPELLWALL = []
@@ -123,7 +128,7 @@ class DeathFinder():
     
     if rerender == True:
       print("[M] Rendering Map from File %s:%s\n"%(self.yminrender, self.ymaxrender), file=sys.stderr)
-      _rwall, _rdark, _rspawn = MapLoad(ymin=self.yminrender, ymax=self.ymaxrender)
+      _rwall, _rdark, _rspawn, _rdoor, _rloot, _rmix = MapLoad(ymin=self.yminrender, ymax=self.ymaxrender)
       
       for solid in _rwall:
         if solid not in self.bricks:
@@ -136,6 +141,13 @@ class DeathFinder():
       for spawn in _rspawn:
         monster = self.npc_manager.randomMonster(spawn[1])
         self.npc_manager.spawnMonster(monster[0], monster[1], monster[2], spawn)
+      
+      self.dfBush += _rmix[0]
+      self.dfBranch += _rmix[1]
+      self.dfMound += _rmix[2]
+      self.dfWater += _rmix[3]
+      self.dfLeaf += _rmix[4]
+      self.loot += _rloot
       
       del _rwall
       del _rdark
@@ -159,7 +171,9 @@ class DeathFinder():
     afflicted = ""
     if user in list(self.players.keys()):
       if user in self.paralysis:
-        afflicted += "P"
+         afflicted += "P"
+       elif user in self.waterlogged:
+         afflicted += "W"
       
     return afflicted
   
@@ -286,9 +300,6 @@ class DeathFinder():
                 view += "&"
               elif (x,y) in list(_NPC.keys()):
                 view += _NPC.get((x,y))
-                __character = _NPC.get((x,y))
-                if __character != None and __character not in self.ascii:
-                  self.ascii += __character
               elif (x,y) in self.magicwalls:
                 view += ":"
               elif (x,y) in self.loot:
@@ -299,19 +310,7 @@ class DeathFinder():
                 view += "#"
               else:
                 view += "."
-          elif user in self.ESP and (x,y) in list(_NPC.keys()):
-            view += _NPC.get((x,y))
-            __character = _NPC.get((x,y))
-            if __character != None and __character not in self.ascii:
-              self.ascii += __character
-          else:
-            view += " "
-
-        view += "\n"
-        if any(sst in view for sst in self.ascii) == False:
-          view = "\n"
-        elif view.startswith(" ") == False:
-          view = view.replace("  ", "").replace(". ", ".")
+        view = view.rstrip() + "\n"
         omni_view += view
         view = ""
 
@@ -393,11 +392,9 @@ class DeathFinder():
     """
     self.UpdatePlayers()
     self.epoch += 1
-    self.walls = self.bricks + self.magicwalls
 
     for user in self.players:
-      _rlwalls = self.everyone_but(user)
-      _rlwalls += self.npc_manager.allnpc_but("___")
+      allsolids = all_solids(user)
       x,y = self.players[user]["pos"]
       status = self.players[user]["status"]
       action = self.players[user]["action"][:1]
@@ -413,7 +410,7 @@ class DeathFinder():
       if action == "!":
         action = self.players[user]["action"][:3]
 
-        if user in self.SPELLWALL and action.upper() == "!S":
+        if user in self.SPELLWALL and action[:2].upper() == "!S":
           barrier = circle_pog(x,y,3)
           self.magicwalls += barrier
           self.walls += barrier
@@ -435,7 +432,7 @@ class DeathFinder():
             if moveopt[action.upper()] not in (self.walls + _rlwalls):
               self.players[user]["pos"] = moveopt[action.upper()]
 
-        elif user in self.HEALING and action.upper() == "!H":
+        elif user in self.HEALING and action[:2].upper() == "!H":
           # todo: trade xp for hp
           for _pl in self.players:
             if self.players[_pl]["status"] <= 15:
@@ -444,22 +441,22 @@ class DeathFinder():
 
       elif action in "wasd":
         if action == "w":
-          if (y-1 < 0) or ((x, y-1) in self.walls+_rlwalls):
+          if (y-1 < 0) or ((x, y-1) in allsolids):
             pass
           else:
             y -= 1
         elif action == "s":
-          if (y+1 >= self.height) or ((x, y+1) in self.walls+_rlwalls):
+          if (y+1 >= self.height) or ((x, y+1) in allsolids):
             pass
           else:
             y += 1
         elif action == "d":
-          if (x + 1 >= self.width) or ((x+1, y) in self.walls+_rlwalls):
+          if (x + 1 >= self.width) or ((x+1, y) in allsolids):
             pass
           else:
             x += 1
         elif action == "a":
-          if (x - 1 < 0) or ((x-1, y) in self.walls+_rlwalls):
+          if (x - 1 < 0) or ((x-1, y) in allsolids):
             pass
           else:
             x -= 1
@@ -467,8 +464,7 @@ class DeathFinder():
         self.players[user]["pos"] = (x,y)
 
     for monster in self.npc_manager.ENEMY:
-      _rlwalls = self.npc_manager.allnpc_but(monster)
-      _rlwalls += self.everyone_but("___")
+      allsolids = all_solids(monster)
       x,y = self.npc_manager.ENEMY[monster]["pos"]
       size = self.npc_manager.ENEMY[monster]["size"]
       actionopt = self.npc_manager.ENEMY[monster]["moveset"]
@@ -480,22 +476,22 @@ class DeathFinder():
 
       if action in "wasd":
         if action == "w":
-          if (y-1 < 0) or ((x, y-1) in self.walls+_rlwalls):
+          if (y-1 < 0) or ((x, y-1) in allsolids):
             pass
           else:
             y -= 1
         elif action == "s":
-          if (y+1 >= self.height) or ((x, y+1) in self.walls+_rlwalls):
+          if (y+1 >= self.height) or ((x, y+1) in allsolids):
             pass
           else:
             y += 1
         elif action == "d":
-          if (x + 1 >= self.width) or ((x+1, y) in self.walls+_rlwalls):
+          if (x + 1 >= self.width) or ((x+1, y) in allsolids):
             pass
           else:
             x += 1
         elif action == "a":
-          if (x - 1 < 0) or ((x-1, y) in self.walls+_rlwalls):
+          if (x - 1 < 0) or ((x-1, y) in allsolids):
             pass
           else:
             x -= 1
@@ -503,8 +499,7 @@ class DeathFinder():
         self.npc_manager.ENEMY[monster]["pos"] = (x,y)
 
     for npc in self.npc_manager.NPC:
-      _rlwalls = self.npc_manager.allnpc_but(npc)
-      _rlwalls += self.everyone_but("___")
+      allsolids = all_solids(monster)
       x,y = self.npc_manager.NPC[npc]["pos"]
       size = self.npc_manager.NPC[npc]["size"]
       actionopt = self.npc_manager.NPC[npc]["moveset"]
@@ -519,22 +514,22 @@ class DeathFinder():
 
       if action in "wasd":
         if action == "w":
-          if (y-1 < 0) or ((x, y-1) in self.walls+_rlwalls):
+          if (y-1 < 0) or ((x, y-1) in allsolids):
             pass
           else:
             y -= 1
         elif action == "s":
-          if (y+1 >= self.height) or ((x, y+1) in self.walls+_rlwalls):
+          if (y+1 >= self.height) or ((x, y+1) in allsolids):
             pass
           else:
             y += 1
         elif action == "d":
-          if (x + 1 >= self.width) or ((x+1, y) in self.walls+_rlwalls):
+          if (x + 1 >= self.width) or ((x+1, y) in allsolids):
             pass
           else:
             x += 1
         elif action == "a":
-          if (x - 1 < 0) or ((x-1, y) in self.walls+_rlwalls):
+          if (x - 1 < 0) or ((x-1, y) in allsolids):
             pass
           else:
             x -= 1
@@ -552,7 +547,10 @@ class DeathFinder():
       _hp = self.players[user]["status"]
       if self.players[user]["status"] <= 15.0:
         hplost -= choice(([0]*10)+[0.5])
-        self.players[user]["status"] -= hplost
+        if user in self.REFLECTION and randint(0,1) == 1:
+          self.npc_manager.inflict(position,damage)
+        else
+          self.players[user]["status"] -= hplost
       self.players[user]["xp"] += xpgain
       if xpgain > 0.01:
         print("[%s] Hp(%s)-%s XP+%s "%(user, round(_hp,3), hplost, xpgain), file=sys.stderr)
@@ -665,7 +663,7 @@ if __name__ == "__main__":
 
   recieving = 15003
   sending   = 15002
-  Game = DeathFinder(40,200, (MCAST_GRP, sending, recieving), address, wait=0.5)
+  Game = DeathFinder(40,305, (MCAST_GRP, sending, recieving), address, wait=0.5)
 
   build = building_pog(30,2,6,4,"left")
   Game.bricks += build[0]
