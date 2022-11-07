@@ -1,5 +1,4 @@
 
-
 def dfMapLoad(mapfile="blight_map.txt", ymin=0, ymax=100, width=40):
   mapfile = open(mapfile,"r")
   map_data = mapfile.read().split("\n")[ymin:ymax]
@@ -44,7 +43,9 @@ def dfMapLoad(mapfile="blight_map.txt", ymin=0, ymax=100, width=40):
 
       elif char == "+":
         dfDoor.append((x,y))
+        dfDark.append((x,y))
       elif char == "?":
+        dfDark.append((x,y))
         dfLoot.append((x,y))
 
       x += 1
