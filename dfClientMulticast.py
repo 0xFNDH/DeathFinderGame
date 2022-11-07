@@ -109,6 +109,8 @@ class GameHandler():
         infobar = infobar.replace("\n", " \N{ESC}[36mwaterlogged\N{ESC}[m\n")
       if "P" in affliction:
         infobar = infobar.replace("\n", " \N{ESC}[93mparalysis\N{ESC}[m\n")
+      if "C" in affliction:
+        infobar = infobar.replace("\n", " \N{ESC}[37munstable\N{ESC}[m\n")
     
     mapdata = _decompress(data.split("\n")[1], int(position.strip("()").split(",")[1]))
     
@@ -138,9 +140,9 @@ class GameHandler():
     bar = bar.replace("*", " "*(34-len(bar)))
     bar += "(%s)"%str(hp)
     if health < hp:
-      bar += str(round(health-hp,1)) + " "
+      bar += str(round(health-hp,1))
     elif health > hp:
-      bar += "+"+str(round(health-hp,1)) + " "
+      bar += "+"+str(round(health-hp,1))
     bar += "\n"
     bar += "XY:%s "%position
     if len(inventory) > 0:
