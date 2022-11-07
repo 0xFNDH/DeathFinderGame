@@ -178,7 +178,7 @@ class DeathFinder():
       if self.players[user].get("pos") in self.dfWater:
         if "b" not in self.inventoryPlayer(user):
           afflicted += "W"
-      if self.players[user].get("pos") in (self.dfBush + self.dfBranch):
+      elif self.players[user].get("pos") in (self.dfBush + self.dfBranch + self.dfBranch):
         afflicted += "C"
       
     return afflicted
@@ -344,7 +344,7 @@ class DeathFinder():
         omni_view += view
         view = ""
 
-      omni_view = omni_view.replace(" "*5, "5").replace("\n\n\n","\n").replace("."*4, "4").replace("5"*3,"3").replace("#"*6, "6").replace("\n","!n")
+      omni_view = omni_view.replace(" "*5,"5").replace("\n\n\n","\n").replace("."*4, "4").replace("5"*3,"3").replace("#"*6,"6").replace("\n","!n")
       return omni_view
     else:
       return "User not in list of players"
@@ -679,7 +679,7 @@ class BroadcastServer():
           if addr[0] not in all_addr and clientdata.startswith("USER:"):
             self.player_data.append([addr[0], clientdata])
             all_addr.append(addr[0])
-            print("[%s] %s"%(addr[0] ,clientdata[:20]), file=sys.stderr)
+            print("[%s] %s"%(addr[0],clientdata[:20]), file=sys.stderr)
         except Exception as e:
           pass
     return self.process()
