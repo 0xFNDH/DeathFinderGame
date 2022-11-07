@@ -52,6 +52,13 @@ In the latest `version 3.0`, the game was swapped to multicast sockets which byp
 | `demon prince`  | `d` | `5-7`
 | `Final Boss`  | `????` | `????`
 
+| NPC           | Symbol | Ability  |
+| ------------- |:------:|:--------:|
+| `Jacob`       | `J`    | No
+| `JimJim`      | `J`    | Healing
+| `Jake`        | `J`    | No
+| `Hÿdor`       | `!`    | Wet Floor Sign
+
 ## dfControls
 
     Movement Inputs:
