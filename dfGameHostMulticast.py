@@ -339,7 +339,6 @@ class DeathFinder():
         if any(sst in view for sst in self.ascii) == False:
           view = "\n"
         elif view[:1] in self.ascii:
-          #view = view.replace("  ", "").replace(". ", ".")
           view = view[:-1].rstrip()+"\n"
         omni_view += view
         view = ""
@@ -468,7 +467,6 @@ class DeathFinder():
               self.players[user]["pos"] = moveopt[action.upper()]
 
         elif user in self.HEALING and action[:2].upper() == "!H":
-          # todo: trade xp for hp
           for _pl in self.players:
             if self.players[_pl]["status"] <= 15:
               self.players[_pl]["status"] += choice([0,1,1,1.5,2])
@@ -666,7 +664,7 @@ class BroadcastServer():
   def listen(self):
 
     wait_time = self.wait_time
-    wait_time = round(wait_time/.95,4) # 5% lag
+    wait_time = round(wait_time/.95,4)
     wait_time = time.time()+wait_time
 
     all_addr = []
