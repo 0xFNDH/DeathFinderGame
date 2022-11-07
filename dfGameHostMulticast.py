@@ -4,7 +4,7 @@ Death Finder
 
 import sys, math, time, socket, traceback, string
 from dfNPCEngine import DeathFinderNPC
-from dfMapRender import MapLoad
+from dfMapRender import dfMapLoad
 from dfStruct import *
 from random import randint, choice
 
@@ -129,7 +129,7 @@ class DeathFinder():
     
     if rerender == True:
       print("[M] Rendering Map from File %s:%s\n"%(self.yminrender, self.ymaxrender), file=sys.stderr)
-      _rwall, _rdark, _rspawn, _rdoor, _rloot, _rmix = MapLoad(ymin=self.yminrender, ymax=self.ymaxrender)
+      _rwall, _rdark, _rspawn, _rdoor, _rloot, _rmix = dfMapLoad(ymin=self.yminrender, ymax=self.ymaxrender)
       
       for solid in _rwall:
         if solid not in self.bricks:
