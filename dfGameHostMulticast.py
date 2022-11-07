@@ -81,7 +81,6 @@ class DeathFinder():
     self.dfLeaf = []
     
     self.paralysis = []
-    self.waterlogged = []
     self.ascii = ".&+@#:;?!,=*^"
     self.loot = [(2,82),(33,4),(34,4),(5,5),(5,6),(5,7),(5,8)]
 
@@ -172,10 +171,11 @@ class DeathFinder():
     """
     afflicted = ""
     if user in list(self.players.keys()):
-      if user in self.paralysis:
+      if self.players[user].get("pos") in self.paralysis:
         afflicted += "P"
-      elif user in self.waterlogged:
-        afflicted += "W"
+      if self.players[user].get("pos") in self.dfWater:
+        if "b" not in self.inventoryPlayer(user):
+          afflicted += "W"
       
     return afflicted
   
