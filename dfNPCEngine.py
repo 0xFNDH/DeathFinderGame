@@ -45,7 +45,8 @@ class DeathFinderNPC():
         zones.append((x+1,y))
         zones.append((x-1,y))
       return zones
-
+    
+    mon = []
     if type(mran) == tuple:
       for enemy in self.ENEMY:
         x,y = self.ENEMY[enemy]["pos"]
@@ -55,9 +56,9 @@ class DeathFinderNPC():
         zones.append((x,y-1))
         zones.append((x+1,y))
         zones.append((x-1,y))
-        if mran in zones:
-          return enemy
-      return None
+        if mran in zones and enemy not in mon:
+          mon.append(enemy)
+      return mon
 
   def enemypositions(self):
     pos = []
@@ -164,13 +165,13 @@ class DeathFinderNPC():
     """
     inflict(player_position, player_attack)
     """
-    delt = atk
     taken = 0
     xp = 0
+    delt = atk
     if position in self.damagefield():
-      # Todo: Multiple Enemies Attack? Blocking Attack?
-      monster = self.damagefield(position)
-      if monster != None:
+      mon = self.damagefield(position)
+      for monster in mon:
+        delt = atk * choice(([1]*5)+[1.3]) # 16% Critical Attack Rate for +30% Damage
         if self.ENEMY[monster]["hp"] < delt:
           delt = self.ENEMY[monster]["hp"] + 0.5
         self.ENEMY[monster]["hp"] -= delt
@@ -180,7 +181,7 @@ class DeathFinderNPC():
           xp += 0.02
         else:
           monsize = self.ENEMY[monster]["size"]
-          taken += (monsize/delt)*monsize
+          taken += ((monsize/delt)*monsize)*choice(([1]*5)+[0.7]) # 16% Block Rate for -30% Damage Taken
           # Damage recieved = (Monster Size / Player Attack) * Monster Size
           # No Leeroy Jenkins
           xp += 0.02
