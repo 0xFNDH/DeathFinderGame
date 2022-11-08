@@ -172,7 +172,10 @@ class DeathFinderNPC():
       #  delt += atk # 20% player crit chance
       monster = self.damagefield(position)
       if monster != None:
-        self.ENEMY[monster]["hp"] -= delt
+        if self.ENEMY[monster]["hp"] < delt:
+          delt = self.ENEMY[monster]["hp"] + 0.5
+        else:
+          self.ENEMY[monster]["hp"] -= delt
         if self.ENEMY[monster]["hp"] <= 0:
           print("[-] %s was killed."%(monster), file=sys.stderr)
           self.ENEMY.pop(monster)
