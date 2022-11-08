@@ -134,7 +134,7 @@ class GameHandler():
     bar = "(%s)"%Username
     bar += " HP[%s%s*] "%( "#"*int(health),":"*abs(int(health-hp)) )
     bar = bar.replace("*", " "*(34-len(bar)))
-    bar += "(%s)"%str(hp)
+    bar += "(%s)"%str(round(hp,2))
     if health < hp:
       bar += str(round(health-hp,1))
     elif health > hp:
