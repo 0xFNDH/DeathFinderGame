@@ -313,10 +313,10 @@ class DeathFinder():
                 __character = _NPC.get((x,y))
                 if __character != None and __character not in self.ascii:
                   self.ascii += __character
-              elif (x,y) in self.magicwalls:
-                view += '"'
               elif (x,y) in self.loot:
                 view += "?"
+              elif (x,y) in self.magicwalls:
+                view += '"'
               elif (x,y) in self.paralysis:
                 view += "'"
               elif (x,y) in self.dfBranch:
