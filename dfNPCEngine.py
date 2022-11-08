@@ -168,22 +168,20 @@ class DeathFinderNPC():
     taken = 0
     xp = 0
     if position in self.damagefield():
-      #if choice(range(5)) == 0:
-      #  delt += atk # 20% player crit chance
+      # Todo: Multiple Enemies Attack? Blocking Attack?
       monster = self.damagefield(position)
       if monster != None:
         if self.ENEMY[monster]["hp"] < delt:
           delt = self.ENEMY[monster]["hp"] + 0.5
-        else:
-          self.ENEMY[monster]["hp"] -= delt
+        self.ENEMY[monster]["hp"] -= delt
         if self.ENEMY[monster]["hp"] <= 0:
           print("[-] %s was killed."%(monster), file=sys.stderr)
           self.ENEMY.pop(monster)
           xp += 0.02
         else:
           monsize = self.ENEMY[monster]["size"]
-          taken += (monsize/atk)*monsize
-          # damage recieved = (size/attack)*size
-          # this prevents players from rushing to the end of the game
+          taken += (monsize/delt)*monsize
+          # Damage recieved = (Monster Size / Player Attack) * Monster Size
+          # No Leeroy Jenkins
           xp += 0.02
     return round(taken,2), round(xp*delt,2)
