@@ -474,7 +474,7 @@ class DeathFinder():
       
       elif action in "wasd":
         if (x,y) in (self.dfBush + self.dfBranch + self.dfWater):
-          if randint(1,4) == 1:
+          if randint(1,5) == 1:
             action = " "
         if action == "w":
           if (y-1 < 0) or ((x, y-1) in allsolids):
@@ -594,7 +594,7 @@ class DeathFinder():
       _hp = self.players[user]["status"]
       if self.players[user]["status"] < 20.0:
         hplost -= choice(([0]*10)+[0.5])
-      if user in self.REFLECTION and randint(0,1) == 1:
+      if user in self.REFLECTION and randint(0,4) == 1:
         self.npc_manager.inflict(position,damage)
       else:
         self.players[user]["status"] -= hplost
@@ -669,7 +669,7 @@ class BroadcastServer():
 
     all_addr = []
 
-    if True: #try:
+    if True:
       while time.time() < wait_time:
         try:
           clientdata, addr = self.ingress.recvfrom(50)
