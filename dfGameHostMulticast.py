@@ -87,7 +87,7 @@ class DeathFinder():
 
     self.ESP = ["Admin"]
     self.SPELLWALL = []
-    self.REFLECTION = [] # todo: chance 50%
+    self.REFLECTION = []
     self.HEALING = []
     self.JUMPBOOT = []
 
@@ -378,7 +378,7 @@ class DeathFinder():
   def UpdatePlayers(self):
     for user in self.player_que_data:
       self.players.update(user)
-
+  
   def inventoryPlayer(self, user):
     """
     Returns the inventory of any given player.
@@ -396,7 +396,24 @@ class DeathFinder():
       if user in self.SPELLWALL:
         inv += "S"
     return inv
-
+  
+  def nearbyEnemies(self):
+    """
+    Returns a list of Y pair coordinates so that NPCs in those min max ranges are the only ones that move.
+    """
+    ygroup = []
+    monsters = []
+    for user in self.players:
+      yy = self.players[user]["pos"][1]
+      ygroup.append(12*round((yy-13)/12))
+      ygroup.append(12*round((yy+13)/12))
+    
+    for mon in self.npc_manager.ENEMY:
+      money = self.npc_manager.ENEMY[mon]["pos"][1]
+      if (12*round(money/12)) in ygroup:
+        monsters.append(mon)
+    return monsters
+  
   def BroadcastUpdate(self):
     """
     Multicast socket for pushing out player data over the network.
