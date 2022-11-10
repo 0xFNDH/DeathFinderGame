@@ -42,15 +42,24 @@ def circle_pog(x,y,r):
   circle = []
   for locx in range(x-(r*2),x+(r*2)):
     for locy in range(y-(r*2),y+(r*2)):
-      radi = math.sqrt(((x-locx)**2) + ((y-locy)**2))
+      radi = math.sqrt(((x-locx)**2) + ((y-locy)**2)*2.3)
       if radi < r:
         circle.append((locx,locy))
   for locx in range(x-(r*2),x+(r*2)):
     for locy in range(y-(r*2),y+(r*2)):
       radi = math.sqrt(((x-locx)**2) + ((y-locy)**2))
-      if radi < r-1:
+      if radi < r-1.5:
         circle.remove((locx,locy))
   return circle
+
+def sphere_pog(x,y,r):
+  sphere = []
+  for locx in range(x-(r*2),x+(r*2)):
+    for locy in range(y-(r*2),y+(r*2)):
+      radi = math.sqrt(((x-locx)**2) + ((y-locy)**2)*2.3)
+      if radi < r:
+        sphere.append((locx,locy))
+  return sphere
 
 def magicwall_pog(y,w):
   magicwall = []
