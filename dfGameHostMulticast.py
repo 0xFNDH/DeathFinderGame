@@ -405,12 +405,12 @@ class DeathFinder():
     monsters = []
     for user in self.players:
       yy = self.players[user]["pos"][1]
-      ygroup.append(15*round((yy-12)/15))
-      ygroup.append(15*round((yy+12)/15))
+      ygroup.append(13*round((yy-12)/13))
+      ygroup.append(13*round((yy+12)/13))
     
     for mon in self.npc_manager.ENEMY:
       money = self.npc_manager.ENEMY[mon]["pos"][1]
-      if (15*round(money/15)) in ygroup:
+      if (13*round(money/13)) in ygroup:
         monsters.append(mon)
     return monsters
   
@@ -556,7 +556,7 @@ class DeathFinder():
         self.npc_manager.ENEMY[monster]["pos"] = (x,y)
 
     for npc in self.npc_manager.NPC:
-      allsolids = self.all_solids(monster)
+      allsolids = self.all_solids(npc)
       allsolids += self.dfWater
       x,y = self.npc_manager.NPC[npc]["pos"]
       size = self.npc_manager.NPC[npc]["size"]
