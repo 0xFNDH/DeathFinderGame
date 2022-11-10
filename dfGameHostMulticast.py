@@ -20,7 +20,7 @@ def distance(p1, p2):
   """
   Remember that stuff you forgot in high school math class? That's what this is.
   """
-  return math.sqrt(((p2[0]-p1[0])**2) + ((p2[1]-p1[1])**2))
+  return math.sqrt(((p2[0]-p1[0])**2) + ((p2[1]-p1[1])**2)*2.3)
 
 def IV(data, true_false=False, limit=600):
   """
@@ -285,16 +285,16 @@ class DeathFinder():
       view = ""
       omni_view = ""
       min_y, max_y = 0,0
-      if usery-(visability+2) >= 0:
-        min_y = usery-(visability+2)
-      if usery+(visability+2) > self.height:
+      if usery-(visability) >= 0:
+        min_y = usery-(visability)
+      if usery+(visability) > self.height:
         max_y = self.height
       else:
-        max_y = usery+(visability+2)
+        max_y = usery+(visability)
 
       for y in range(min_y, max_y):
         for x in range(0, self.width):
-          if math.sqrt(((x-userx)**2) + ((y-usery)**2)) < visability:
+          if distance((userx, usery), (x,y)) < visability+3:
             if (x,y) == pos:
               view += "@"
             else:
@@ -344,7 +344,7 @@ class DeathFinder():
           view = view[:-1].rstrip()+"\n"
         omni_view += view
         view = ""
-
+      
       omni_view = omni_view.replace(" "*5,"5").replace("\n\n\n","\n").replace("."*4, "4").replace("5"*3,"3").replace("#"*6,"6").replace("\n","!n")
       return omni_view
     else:
@@ -399,18 +399,19 @@ class DeathFinder():
   
   def nearbyEnemies(self):
     """
-    Returns a list of Y pair coordinates so that NPCs in those min max ranges are the only ones that move.
+    Returns all the monsters that are within a certain range of the player.
     """
     ygroup = []
     monsters = []
     for user in self.players:
       yy = self.players[user]["pos"][1]
-      ygroup.append(13*round((yy-12)/13))
-      ygroup.append(13*round((yy+12)/13))
+      ygroup.append(10*round((yy)/10))
+      ygroup.append(10*round((yy-10)/10))
+      ygroup.append(10*round((yy+10)/10))
     
     for mon in self.npc_manager.ENEMY:
       money = self.npc_manager.ENEMY[mon]["pos"][1]
-      if (13*round(money/13)) in ygroup:
+      if (10*round(money/10)) in ygroup:
         monsters.append(mon)
     return monsters
   
@@ -518,7 +519,7 @@ class DeathFinder():
 
         self.players[user]["pos"] = (x,y)
 
-    for monster in self.npc_manager.ENEMY:
+    for monster in self.nearbyEnemies():
       allsolids = self.all_solids(monster)
       if monster[:1] not in ["n","B"]:
         allsolids += self.dfWater
