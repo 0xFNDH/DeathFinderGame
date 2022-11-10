@@ -405,12 +405,12 @@ class DeathFinder():
     monsters = []
     for user in self.players:
       yy = self.players[user]["pos"][1]
-      ygroup.append(12*round((yy-13)/12))
-      ygroup.append(12*round((yy+13)/12))
+      ygroup.append(15*round((yy-12)/15))
+      ygroup.append(15*round((yy+12)/15))
     
     for mon in self.npc_manager.ENEMY:
       money = self.npc_manager.ENEMY[mon]["pos"][1]
-      if (12*round(money/12)) in ygroup:
+      if (15*round(money/15)) in ygroup:
         monsters.append(mon)
     return monsters
   
