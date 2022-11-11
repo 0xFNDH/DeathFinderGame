@@ -294,8 +294,10 @@ class DeathFinder():
       visability = self.visible
       if (63 > usery > 35):
         visability = 6
-      elif (155 > usery > 83):
+      elif (83 > usery > 63):
         visability = 12
+      elif (156 > usery > 83):
+        visability = 6
       view = ""
       omni_view = ""
       min_y, max_y = 0,0
