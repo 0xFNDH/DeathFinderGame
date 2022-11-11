@@ -292,7 +292,7 @@ class DeathFinder():
       _players = self.everyone_but(user)
       _NPC = self.npc_manager.showNPCs()
       visability = self.visible
-      if (63 > usery > 35):
+      if (63 > usery > 30):
         visability = 6
       elif (83 > usery > 63):
         visability = 12
