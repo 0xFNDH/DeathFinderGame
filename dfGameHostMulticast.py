@@ -43,13 +43,14 @@ def IV(data, true_false=False, limit=600):
 
 class DeathFinder():
 
-  def __init__(self, width, height, multicast, address, wait=5.0):
+  def __init__(self, width, height, multicast, address, wait=1.0):
 
     assert type(width) == int
     assert type(height) == int
     assert len(multicast) == 3
     assert type(wait) in [int,float]
-
+    
+    # Player Material
     self.width = width
     self.height = height
     self.player_que = []
@@ -69,28 +70,34 @@ class DeathFinder():
         "action": " ",
         "xp": 0.0}
     }
+    
+    # World Material
     self.doors = []
     self.bricks = []
     self.magicwalls = []
     self.MAGICWALL = []
     self.dark = []
-    self.healthdot = []
     self.dfBranch = []
     self.dfBush = []
     self.dfMound = []
     self.dfWater = []
     self.dfLeaf = []
-    
-    self.paralysis = []
+    self.loot = [(2,82),(33,4),(34,4)]
     self.ascii = ".&+@#:;?!,=*^"
-    self.loot = [(2,82),(33,4),(34,4),(5,5),(5,6),(5,7),(5,8)]
-
+    
+    # Status Effects
+    self.paralysis = []
+    self.healthdot = []
+    
+    # Abilities
     self.ESP = ["Admin"]
     self.SPELLWALL = []
     self.REFLECTION = []
     self.HEALING = []
     self.JUMPBOOT = []
-
+    self.basiliskboot = []
+    
+    # Additional Global Settings
     self.yminrender = None
     self.ymaxrender = None
     self.wait = wait
@@ -183,12 +190,17 @@ class DeathFinder():
       
     return afflicted
   
-  def ObtainLoot(self, user):
+  def ObtainLoot(self, user, force=None):
     """
     Players that find loot will be given a random skill/ability/magic item.
     Three items will be given at max and finding a loot has a 1/15 chance to spawn a mimic.
     """
-    if user in list(self.players.keys()):
+    if user in list(self.players.keys()) and type(force) == str:
+      if force[:1].upper() == "B":
+        print("[?] %s obtained Basilisk Boots"%(user), file=sys.stderr)
+        self.basiliskboot.append(user)
+    
+    elif user in list(self.players.keys()):
       # E : Amulet of ESP
       # S : Book of Magic Shield
       # R : Amulet of Reflection
@@ -265,6 +277,8 @@ class DeathFinder():
             self.SPELLWALL.remove(user)
           if self.REFLECTION.count(user) > 0:
             self.REFLECTION.remove(user)
+          if self.basiliskboot.count(user) > 0:
+            self.basiliskboot.remove(user)
 
   def Render(self, user):
     """
@@ -395,6 +409,8 @@ class DeathFinder():
         inv += "R"
       if user in self.SPELLWALL:
         inv += "S"
+      if user in self.basiliskboot:
+        inv += "b"
     return inv
   
   def nearbyEnemies(self):
@@ -451,7 +467,7 @@ class DeathFinder():
                       (24,197), (24,196), (19,196), (19,197), (19,200)]
       status = self.players[user]["status"]
       action = self.players[user]["action"][:1]
-      if (x,y) in self.paralysis:
+      if (x,y) in self.paralysis and choice("000001") == "0":
         action = " "
       elif (x,y) in self.healthdot and status < 15:
         self.players[user]["status"] += 1
@@ -469,7 +485,7 @@ class DeathFinder():
           barrier = circle_pog(x,y,3)
           self.magicwalls += barrier
           self.MAGICWALL.append([self.epoch+5, barrier])
-          print("[*] %s reads the Book of Magic Shield"%(user), file=sys.stderr)
+          print("[*] %s casts a Magic Shield"%(user), file=sys.stderr)
 
         elif user in self.JUMPBOOT and action.upper().startswith("!J"):
           moveopt = {
@@ -493,7 +509,7 @@ class DeathFinder():
               self.players[user]["xp"] -= 0.04
       
       elif action in "wasd":
-        if (x,y) in (self.dfBush + self.dfBranch + self.dfWater):
+        if (x,y) in (self.dfBush + self.dfBranch + self.dfWater) and user not in self.basiliskboot:
           if randint(1,5) == 1:
             action = " "
         if action == "w":
@@ -610,7 +626,9 @@ class DeathFinder():
       position = self.players[user]["pos"]
       damage = 2
       damage += int(self.players[user]["xp"])
-      hplost, xpgain = self.npc_manager.inflict(position,damage)
+      hplost, xpgain, itemdrop = self.npc_manager.inflict(position,damage)
+      if len(itemdrop) > 0:
+        self.ObtainLoot(user, itemdrop)
       _hp = self.players[user]["status"]
       if self.players[user]["status"] < 20.0:
         hplost -= choice(([0]*10)+[0.5])
