@@ -632,7 +632,7 @@ class DeathFinder():
       if len(itemdrop) > 0:
         self.ObtainLoot(user, itemdrop)
       _hp = self.players[user]["status"]
-      if self.players[user]["status"] < 20.0:
+      if self.players[user]["status"] =< 19.5:
         hplost -= choice(([0]*10)+[0.5])
       if user in self.REFLECTION and randint(0,4) == 1:
         self.npc_manager.inflict(position,damage)
