@@ -166,6 +166,7 @@ class DeathFinderNPC():
     inflict(player_position, player_attack)
     """
     taken = 0
+    itemdrop = ""
     xp = 0
     delt = atk
     if position in self.damagefield():
@@ -177,6 +178,9 @@ class DeathFinderNPC():
         self.ENEMY[monster]["hp"] -= delt
         if self.ENEMY[monster]["hp"] <= 0:
           print("[-] %s was killed."%(monster), file=sys.stderr)
+          if "Basilisk" in monster:
+            if choice("0001") == "0":
+              itemdrop = "b"
           self.ENEMY.pop(monster)
           xp += 0.02
         else:
@@ -185,4 +189,4 @@ class DeathFinderNPC():
           # Damage recieved = (Monster Size / Player Attack) * Monster Size
           # No Leeroy Jenkins
           xp += 0.02
-    return round(taken,2), round(xp*delt,2)
+    return round(taken,2), round(xp*delt,2), itemdrop
