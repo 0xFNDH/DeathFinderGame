@@ -82,7 +82,7 @@ class DeathFinder():
     self.dfMound = []
     self.dfWater = []
     self.dfLeaf = []
-    self.loot = [(2,82),(33,4),(34,4)]
+    self.loot = [(2,82),(33,4),(34,4), (5,146)]
     self.ascii = ".&+@#:;?!,=*^"
     
     # Status Effects
@@ -190,12 +190,12 @@ class DeathFinder():
       
     return afflicted
   
-  def ObtainLoot(self, user, force=None):
+  def ObtainLoot(self, user, force=""):
     """
     Players that find loot will be given a random skill/ability/magic item.
     Three items will be given at max and finding a loot has a 1/15 chance to spawn a mimic.
     """
-    if user in list(self.players.keys()) and type(force) == str:
+    if user in list(self.players.keys()) and len(force) > 0:
       if force[:1].upper() == "B":
         print("[?] %s obtained Basilisk Boots"%(user), file=sys.stderr)
         self.basiliskboot.append(user)
