@@ -442,7 +442,7 @@ class DeathFinder():
     becon = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     becon.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
     becon_addr = (self.multicast, self.mport_out)
-    for username in self.player_que:
+    for username in list(self.players.keys()):
       hp = self.players[username].get("status")
       xp = round(self.players[username].get("xp"),2)
       pos = str(self.players[username].get("pos")).replace(" ","")
@@ -752,7 +752,7 @@ if __name__ == "__main__":
 
   recieving = 15003
   sending   = 15002
-  Game = DeathFinder(40,305, (MCAST_GRP, sending, recieving), address, wait=0.5)
+  Game = DeathFinder(40,305, (MCAST_GRP, sending, recieving), address, wait=0.75)
   build = building_pog(30,2,6,4,"left")
   Game.bricks += build[0]
   Game.doors.append(build[1])
