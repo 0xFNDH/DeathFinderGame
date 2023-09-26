@@ -1,5 +1,8 @@
 
 def dfMapLoad(mapfile="blight_map.txt", ymin=0, ymax=100, width=40):
+  """
+  Elements added here will spawn into the map upon launch\
+  """
   mapfile = open(mapfile,"r")
   map_data = mapfile.read().split("\n")[ymin:ymax]
   mapfile.close()
