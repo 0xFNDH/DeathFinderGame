@@ -10,10 +10,10 @@ monsters with the help of other players. The game takes inspiration from [**Neth
 
 ## dfMulticast
 
-In the latest `version 3.0`, the game was swapped to multicast sockets which bypassed network restrictions. Multicast also reduced the amount of strain on the network when multiple groups were on at the same time. The max player limit was increased to 15 as a result.
+In the latest `version 3.0`, the game was swapped to multicast sockets which decreased latency. Multicast also reduced the amount of strain on the network when multiple groups were on at the same time. The max player limit was increased to 15 as a result.
 
 >Death Finder `version 2.0`, was converted to support UDP broadcasting which had many downsides and did not preform reliably. Packet sizes were limited to `~1800 bytes` max and the game did not operate across the full network.
->>Death Finder `version 1.0`, used TCP sockets and HTTP to communicate with the server. Players sent actions through `POST` requests and it was easy to operate. But network restrictions prevented devices from accessing the game's server.
+>>Death Finder `version 1.0`, used TCP sockets and HTTP to communicate with the server. Players sent actions through `POST` requests and it was easy to operate. But the preformance from the game's server was slow.
 
 ## dfMap
 
